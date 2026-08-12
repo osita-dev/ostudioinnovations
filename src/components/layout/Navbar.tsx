@@ -40,9 +40,8 @@ export function Navbar() {
       )}
     >
       <div className="container flex h-20 items-center justify-between">
-        <Link to="/" className="flex items-baseline gap-1 shrink-0" aria-label="O Studio Innovations home">
-          <span className="font-serif-display text-3xl text-primary leading-none">O</span>
-          <span className="font-script text-2xl text-primary leading-none">studio</span>
+        <Link to="/" className="flex items-center shrink-0" aria-label="O Studio Innovations home">
+          <img src="/logo-mark.png" alt="O Studio Innovations" className="h-11 sm:h-12 w-auto object-contain" />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8">

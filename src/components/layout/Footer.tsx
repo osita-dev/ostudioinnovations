@@ -8,9 +8,8 @@ export function Footer() {
       <div className="container py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <div className="md:col-span-1">
-            <Link to="/" className="flex items-baseline gap-1">
-              <span className="font-serif-display text-3xl text-primary leading-none">O</span>
-              <span className="font-script text-2xl text-primary leading-none">studio</span>
+            <Link to="/" aria-label="O Studio Innovations home">
+              <img src="/logo-mark.png" alt="O Studio Innovations" className="h-16 w-auto object-contain" />
             </Link>
             <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
               Creative. Digital. Production.
