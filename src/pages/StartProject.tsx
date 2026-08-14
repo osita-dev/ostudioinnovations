@@ -6,6 +6,7 @@ import { z } from "zod";
 import { Check, ArrowRight, ArrowLeft, PartyPopper } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { buildWhatsAppLink } from "@/lib/whatsapp";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
@@ -58,7 +59,7 @@ const StartProject = () => {
   const preselected = searchParams.get("service") ?? "";
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
-
+  const [whatsappLink, setWhatsappLink] = useState<string | null>(null);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
@@ -98,7 +99,6 @@ const StartProject = () => {
     if (valid) setStep((s) => Math.min(s + 1, steps.length - 1));
   };
   const goBack = () => setStep((s) => Math.max(s - 1, 0));
-
   const onSubmit = (values: FormValues) => {
     submitProjectInquiry({
       name: values.name,
@@ -113,6 +113,11 @@ const StartProject = () => {
       description: values.description,
       additionalRequirements: values.additionalRequirements || undefined,
     });
+
+    const link = buildWhatsAppLink(values);
+    setWhatsappLink(link);
+    window.open(link, "_blank", "noopener,noreferrer");
+
     setSubmitted(true);
   };
 
@@ -130,9 +135,18 @@ const StartProject = () => {
           Thanks, {values.name.split(" ")[0]}. O Studio has received your structured project request and
           will follow up at {values.email} or {values.phone} shortly to discuss next steps.
         </p>
-        <Button asChild className="rounded-full px-8">
-          <a href="/">Return Home</a>
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          {whatsappLink && (
+            <Button asChild variant="outline" className="rounded-full px-8">
+              <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
+                Didn't open? Send via WhatsApp
+              </a>
+            </Button>
+          )}
+          <Button asChild className="rounded-full px-8">
+            <a href="/">Return Home</a>
+          </Button>
+        </div>
       </div>
     );
   }
@@ -159,8 +173,8 @@ const StartProject = () => {
                     i < step
                       ? "bg-primary text-primary-foreground border-primary"
                       : i === step
-                      ? "border-primary text-primary"
-                      : "border-border text-muted-foreground"
+                        ? "border-primary text-primary"
+                        : "border-border text-muted-foreground"
                   )}
                 >
                   {i < step ? <Check size={14} /> : i + 1}
