@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Instagram, Facebook, Mail, Phone } from "lucide-react";
+import { Instagram, Facebook, Mail, Phone, Youtube } from "lucide-react";
+import { FaTiktok, FaWhatsapp } from 'react-icons/fa'
 import { serviceCategories } from "@/data/services";
 
 export function Footer() {
@@ -9,7 +10,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <div className="md:col-span-1">
             <Link to="/" aria-label="O Studio Innovations home">
-              <img src="/logo-mark.png" alt="O Studio Innovations" className="h-16 w-auto object-contain" />
+              <img src="/OstudioInnovation.svg" alt="O Studio Innovations" className="h-16 w-auto object-contain" />
             </Link>
             <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
               Creative. Digital. Production.
@@ -49,17 +50,26 @@ export function Footer() {
             <h4 className="text-xs tracking-widest-plus uppercase text-primary mb-4">Get in Touch</h4>
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Mail size={15} className="text-primary shrink-0" /> hello@ostudio.com
+                <Mail size={15} className="text-primary shrink-0" /> info@ostudioinnovations.com
               </li>
               <li className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Phone size={15} className="text-primary shrink-0" /> +234 000 000 0000
+                <Phone size={15} className="text-primary shrink-0" /> +234 704 225 1787
               </li>
               <li className="flex items-center gap-3 pt-1">
+                <a href="https://www.youtube.com/@ostudioinnovations" aria-label="Facebook" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Youtube size={18} />
+                </a>
+                <a href="https://www.tiktok.com/@ostudioinnovations?_r=1&_t=ZN-98zmnqYiFks" aria-label="Facebook" className="text-muted-foreground hover:text-primary transition-colors">
+                  <FaTiktok size={18} />
+                </a>
                 <a href="#" aria-label="Instagram" className="text-muted-foreground hover:text-primary transition-colors">
                   <Instagram size={18} />
                 </a>
                 <a href="#" aria-label="Facebook" className="text-muted-foreground hover:text-primary transition-colors">
                   <Facebook size={18} />
+                </a>
+                <a href="#" aria-label="Facebook" className="text-muted-foreground hover:text-primary transition-colors">
+                  <FaWhatsapp size={18} />
                 </a>
               </li>
             </ul>

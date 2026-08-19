@@ -41,7 +41,7 @@ export function Navbar() {
     >
       <div className="container flex h-20 items-center justify-between">
         <Link to="/" className="flex items-center shrink-0" aria-label="O Studio Innovations home">
-          <img src="/logo-mark.png" alt="O Studio Innovations" className="h-11 sm:h-12 w-auto object-contain" />
+          <img src="/OstudioInnovation.svg" alt="O Studio Innovations" className="h-11 sm:h-12 w-auto object-contain" />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8">
