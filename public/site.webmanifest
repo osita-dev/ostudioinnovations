@@ -1,0 +1,12 @@
+{
+  "name": "O Studio Innovations",
+  "short_name": "O Studio",
+  "description": "Creative. Digital. Production. Where creativity meets innovation.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2E2910",
+  "theme_color": "#FFD400",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
