@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Instagram, Facebook, Mail, Phone, Youtube, Locate } from "lucide-react";
+import { Instagram, Facebook, Mail, Phone, Youtube } from "lucide-react";
 import { FaLocationArrow, FaTiktok, FaWhatsapp } from 'react-icons/fa'
 import { serviceCategories } from "@/data/services";
 
