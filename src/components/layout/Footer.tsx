@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Instagram, Facebook, Mail, Phone, Youtube } from "lucide-react";
-import { FaLocationArrow, FaTiktok, FaWhatsapp } from 'react-icons/fa'
+import { FaMapMarkerAlt, FaTiktok, FaWhatsapp } from 'react-icons/fa'
 import { serviceCategories } from "@/data/services";
 
 export function Footer() {
@@ -56,7 +56,7 @@ export function Footer() {
                 <Phone size={15} className="text-primary shrink-0" /> +234 704 225 1787
               </li>
               <li className="flex items-center gap-2 text-sm text-muted-foreground">
-                <FaLocationArrow size={15} className="text-primary shrink-0" /> 174 Ikorodu Rd, Somolu, Lagos 102216, Lagos
+                <FaMapMarkerAlt size={15} className="text-primary shrink-0" /> 174 Ikorodu Rd, Somolu, Lagos 102216, Lagos
               </li>
               <li className="flex items-center gap-3 pt-1">
                 <a href="https://www.youtube.com/@ostudioinnovations" aria-label="Facebook" className="text-muted-foreground hover:text-primary transition-colors">
