@@ -4,7 +4,7 @@ import { getServiceBySlug } from "@/data/services";
 // ⚠️ REPLACE with O Studio's real WhatsApp Business number.
 // International format, digits only — no +, spaces, or dashes.
 // e.g. +234 801 234 5678  →  "2348012345678 2348035754289"
-export const OSTUDIO_WHATSAPP_NUMBER = "2348035754289";
+export const OSTUDIO_WHATSAPP_NUMBER = "2347042251787";
 
 interface WhatsAppInquiryData {
   service: CategorySlug | string;

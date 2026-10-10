@@ -43,6 +43,7 @@ export function Footer() {
               <li><Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors">About O Studio</Link></li>
               <li><Link to="/journal" className="text-sm text-muted-foreground hover:text-primary transition-colors">Journal</Link></li>
               <li><Link to="/faq" className="text-sm text-muted-foreground hover:text-primary transition-colors">FAQ</Link></li>
+              <li><Link to="/careers" className="text-sm text-muted-foreground hover:text-primary transition-colors">Careers</Link></li>
             </ul>
           </div>
 

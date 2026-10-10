@@ -12,6 +12,7 @@ const navLinks = [
   { label: "About", to: "/about" },
   { label: "Journal", to: "/journal" },
   { label: "FAQ", to: "/faq" },
+  { label: "Careers", to: "/careers" },
 ];
 
 export function Navbar() {

@@ -76,6 +76,34 @@ export interface DiscoveryOption {
   icon: string;
 }
 
+// Content creator application — submitted via the /careers page.
+// Mirrors the 15-question application form, grouped by section.
+export interface CreatorApplication {
+  id: string;
+  createdAt: string;
+  // Section 1 — personal information
+  fullName: string;
+  phone: string;
+  email: string;
+  location: string;
+  // Section 2 — creative interests
+  interests: string[];
+  experience: string;
+  equipment: string[];
+  // Section 3 — creativity
+  createdBefore: string;
+  workSamples?: string;
+  videoIdea: string;
+  audienceInterest: string;
+  // Section 4 — collaboration
+  collaboration: string[];
+  aboutYou: string;
+  motivation: string;
+  // Section 5 — confirmation
+  confirmed: boolean;
+  status: "new" | "reviewing" | "shortlisted" | "contacted" | "closed";
+}
+
 // Structured project inquiry — matches the "Project Inquiry" entity
 export interface ProjectInquiry {
   id: string;
