@@ -38,7 +38,14 @@ export const serviceCategories: ServiceCategory[] = [
       { title: "Post-Production", description: "Selected images and footage are edited to O Studio's standard." },
       { title: "Delivery", description: "Final deliverables are shared digitally within the agreed timeline." },
     ],
-    subServices: ["Photography", "Videography", "Event Coverage"],
+    subServices: [
+      "Photography",
+      "Videography",
+      "Event Coverage",
+      "Birthdays, Weddings & Anniversaries",
+      "Church Events",
+      "Post-Event Treats",
+    ],
     startingPrice: "Contact for a quote",
     relatedProjectCategories: ["photography", "videography", "events"],
     icon: "Camera",
@@ -106,7 +113,7 @@ export const serviceCategories: ServiceCategory[] = [
       { title: "Post-Production", description: "Editing and finishing bring the content to life." },
       { title: "Delivery", description: "Final files are delivered ready for release." },
     ],
-    subServices: ["Content Creation", "Music", "Music Video Shoots", "Entertainment Projects"],
+    subServices: ["Content Creation", "Music", "Music Video Shoots", "Entertainment Projects", "Podcast Production"],
     startingPrice: "Contact for a quote",
     relatedProjectCategories: ["videography", "photography"],
     icon: "Music",
@@ -114,13 +121,13 @@ export const serviceCategories: ServiceCategory[] = [
   {
     id: "svc-technology",
     slug: "technology",
-    name: "Technology",
+    name: "Technology & Digital Solutions",
     shortName: "Technology",
     tagline: "Where your business meets the internet.",
     description:
-      "O Studio designs and builds websites and digital/AI solutions — giving businesses a real, working online presence rather than just a template.",
+      "O Studio designs and builds websites, apps, and digital/AI solutions — giving businesses a real, working online presence rather than just a template.",
     whoItsFor:
-      "Businesses and individuals who need a website, a digital product, or an AI-powered solution built properly and maintained going forward.",
+      "Businesses and individuals who need a website, a mobile app, a digital product, or an AI-powered solution built properly and maintained going forward.",
     included: [
       "Discovery and requirements gathering",
       "Design and structure planning",
@@ -140,7 +147,7 @@ export const serviceCategories: ServiceCategory[] = [
       { title: "Testing", description: "Everything is checked before going live." },
       { title: "Launch", description: "The solution goes live, with support as needed." },
     ],
-    subServices: ["Website Building", "AI Solutions", "Digital Solutions"],
+    subServices: ["Website Design & Development", "AI Solutions", "App Development", "Digital Solutions"],
     startingPrice: "Contact for a quote",
     relatedProjectCategories: ["websites", "ai-digital"],
     icon: "Code",
@@ -152,9 +159,9 @@ export const serviceCategories: ServiceCategory[] = [
     shortName: "Creative Services",
     tagline: "Design and branding that carries your identity.",
     description:
-      "O Studio handles the design layer of your brand — from visual identity and branded materials to printing and gift packaging.",
+      "O Studio handles the design layer of your brand — from graphic design and corporate branding to gift packs and souvenirs.",
     whoItsFor:
-      "Businesses and individuals who need a visual identity, branded materials, or physical/printed items produced to a high standard.",
+      "Businesses and individuals who need graphic design, corporate branding, or gift packs and souvenirs produced to a high standard.",
     included: [
       "Design consultation",
       "Concept and draft design",
@@ -174,10 +181,43 @@ export const serviceCategories: ServiceCategory[] = [
       { title: "Finalization", description: "Final files are prepared and approved." },
       { title: "Delivery", description: "Files are delivered, or materials are printed and produced." },
     ],
-    subServices: ["Designs", "Printing", "Gift Packs", "Branding & Visual Materials"],
+    subServices: ["Graphic Design", "Gift Packs", "Souvenirs", "Corporate Branding and Visual Material"],
     startingPrice: "Contact for a quote",
     relatedProjectCategories: ["design", "branding"],
     icon: "Palette",
+  },
+  {
+    id: "svc-studio-rental",
+    slug: "studio-rental",
+    name: "Studio Rental",
+    shortName: "Studio Rental",
+    tagline: "The space is ready — bring the idea.",
+    description:
+      "O Studio rents out its studio spaces by the session — podcast and content rooms, a photo studio, and a film set — for creators, brands, and teams who need a professional space without building one.",
+    whoItsFor:
+      "Podcasters, content creators, brands, and production teams who need a professional space for a session, a series, or an ongoing project — without the cost of building one.",
+    included: [
+      "Podcast/Content Rooms",
+      "Photo Studio",
+      "Film set, etc.",
+      "Basic setup guidance before your session",
+    ],
+    deliverables: [
+      "The studio space for the agreed booking window",
+      "A working setup, checked before your session",
+      "Support during the booking if something isn't clear",
+    ],
+    process: [
+      { title: "Request", description: "Tell us which space, the date, and what you're shooting." },
+      { title: "Availability", description: "We confirm availability and agree the booking window and rate." },
+      { title: "Preparation", description: "The space is set up and checked before your session." },
+      { title: "Session", description: "You shoot. Our team stays reachable if you need support." },
+      { title: "Wrap", description: "Session ends, the space is cleared, and the booking closes." },
+    ],
+    subServices: ["Podcast/Content Rooms", "Photo Studio", "Film set, etc."],
+    startingPrice: "Contact for a quote",
+    relatedProjectCategories: ["photography", "videography", "events"],
+    icon: "Settings",
   },
 ];
 

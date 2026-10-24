@@ -12,7 +12,7 @@ const Services = () => {
         <div className="container text-center">
           <p className="text-xs tracking-widest-plus uppercase text-primary mb-4">What We Do</p>
           <h1 className="font-serif-display text-4xl sm:text-5xl max-w-3xl mx-auto leading-tight">
-            Five capabilities, working as one studio.
+            Six capabilities, working as one studio.
           </h1>
           <p className="mt-5 text-muted-foreground max-w-xl mx-auto">
             Rather than a raw list of services, here's how each part of O Studio solves a real problem —

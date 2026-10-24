@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Check, ArrowRight, ArrowLeft, PartyPopper, Sparkles, GraduationCap, Users } from "lucide-react";
+import { Check, ArrowRight, ArrowLeft, PartyPopper } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,50 +10,61 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { submitCreatorApplication } from "@/lib/applications";
+import { buildApplicationWhatsAppLink } from "@/lib/whatsapp";
 import {
+  formDescription,
   creativeInterests,
   experienceLevels,
   equipmentOptions,
   createdBeforeOptions,
   collaborationTypes,
-  applicationSteps,
-  applicationHighlights,
+  localAvailabilityOptions,
+  scheduleOptions,
+  practicalTaskOptions,
+  applicationSections,
 } from "@/data/careerApplication";
 
 // ============================================================
-// Validation mirrors the form's required/optional markings:
-//   Required — 1,2,3,4,5,6,7,10,11,12,13,14 and the consent box
-//   Optional — 9 (work samples)
+// Validation mirrors the official form's required/optional markings:
+//   Required — all questions except 9 and 20
+//   Optional — Q9 (work samples), Q20 (anything else)
 // ============================================================
 
 const formSchema = z.object({
-  // Section 1 — personal information
+  // Section 1 — personal information (Q1–Q4)
   fullName: z.string().min(2, "Please enter your full name"),
   phone: z.string().min(7, "Please enter a valid phone / WhatsApp number"),
   email: z.string().email("Please enter a valid email address"),
   location: z.string().min(2, "Please tell us where you're based"),
-  // Section 2 — creative interests
+  // Section 2 — creative interests (Q5–Q7)
   interests: z.array(z.string()).min(1, "Please select at least one area"),
   experience: z.string().min(1, "Please select your experience level"),
   equipment: z.array(z.string()).min(1, "Please select at least one option"),
-  // Section 3 — creativity
+  // Section 3 — creative portfolio (Q8–Q12)
   createdBefore: z.string().min(1, "Please choose an option"),
   workSamples: z.string().optional(),
   videoIdea: z.string().min(20, "Please describe your idea (at least 20 characters)"),
   audienceInterest: z.string().min(20, "Please share your thoughts (at least 20 characters)"),
-  // Section 4 — collaboration
-  collaboration: z.array(z.string()).min(1, "Please select at least one option"),
-  aboutYou: z.string().min(20, "Please tell us about yourself (at least 20 characters)"),
+  resourcefulness: z.string().min(20, "Please tell us how you'd approach it (at least 20 characters)"),
+  // Section 4 — collaboration and availability (Q13–Q16)
+  collaboration: z.string().min(1, "Please select an option"),
+  localAvailability: z.string().min(1, "Please choose an option"),
+  schedule: z.string().min(1, "Please choose an option"),
   motivation: z.string().min(20, "Please tell us a bit more (at least 20 characters)"),
-  // Section 5 — confirmation
-  confirmed: z.boolean().refine((v) => v === true, "Please confirm before submitting"),
+  // Section 5 — creative challenge (Q17–Q18)
+  creativeChallenge: z.string().min(20, "Please describe your idea (at least 20 characters)"),
+  practicalTask: z.string().min(1, "Please choose an option"),
+  // Section 6 — final confirmation (Q19–Q20)
+  confirmedAccuracy: z.boolean().refine((v) => v === true, "Please confirm before submitting"),
+  confirmedOwnership: z.boolean().refine((v) => v === true, "Please confirm before submitting"),
+  finalNotes: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 // --- Reusable field components ---------------------------------
 
-/** Card-style multi-select (Q5, Q7, Q12). Tap anywhere to toggle. */
+/** Card-style multi-select (Q5, Q7). Tap anywhere to toggle. */
 function CheckCardGroup({
   options,
   value = [],
@@ -101,7 +112,7 @@ function CheckCardGroup({
   );
 }
 
-/** Single-select presented as full-width rows (Q6, Q8, Q13). */
+/** Single-select presented as full-width rows (Q6, Q8, Q13, Q14, Q15, Q18). */
 function SelectCardGroup({
   options,
   value = "",
@@ -144,11 +155,50 @@ function SelectCardGroup({
   );
 }
 
-const highlightIcons = [Sparkles, Users, GraduationCap];
+/** Numbered question label matching the official form (Q1–Q20). */
+function QuestionLabel({
+  number,
+  htmlFor,
+  optional = false,
+  children,
+}: {
+  number: number;
+  htmlFor?: string;
+  optional?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <Label htmlFor={htmlFor} className="text-base">
+      <span className="mr-0.5">{number}.</span> {children}
+      {optional ? (
+        <span className="ml-2 text-xs font-normal text-muted-foreground">Optional</span>
+      ) : (
+        <span className="ml-1 text-destructive" aria-hidden>
+          *
+        </span>
+      )}
+    </Label>
+  );
+}
+
+/** Live character counter for the long-answer questions. */
+function CharCount({ value, min }: { value: string; min: number }) {
+  const length = (value ?? "").trim().length;
+  const short = length < min;
+  return (
+    <p className={cn("text-xs shrink-0", short ? "text-muted-foreground" : "text-primary")}>
+      {length} characters
+    </p>
+  );
+}
 
 const Careers = () => {
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
+  const [whatsappLink, setWhatsappLink] = useState<string | null>(null);
+  // Kept so the success screen can address the applicant by name
+  // after the form has been reset.
+  const [applicantName, setApplicantName] = useState("");
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -165,10 +215,16 @@ const Careers = () => {
       workSamples: "",
       videoIdea: "",
       audienceInterest: "",
-      collaboration: [],
-      aboutYou: "",
+      resourcefulness: "",
+      collaboration: "",
+      localAvailability: "",
+      schedule: "",
       motivation: "",
-      confirmed: false,
+      creativeChallenge: "",
+      practicalTask: "",
+      confirmedAccuracy: false,
+      confirmedOwnership: false,
+      finalNotes: "",
     },
   });
 
@@ -183,23 +239,24 @@ const Careers = () => {
 
   const values = watch();
 
-  // Per-step validation — only the current step's fields are checked
+  // Per-section validation — only the current section's fields are checked
   const stepFields: Record<number, (keyof FormValues)[]> = {
     0: ["fullName", "phone", "email", "location"],
     1: ["interests", "experience", "equipment"],
-    2: ["createdBefore", "videoIdea", "audienceInterest"],
-    3: ["collaboration", "aboutYou", "motivation"],
-    4: ["confirmed"],
+    2: ["createdBefore", "videoIdea", "audienceInterest", "resourcefulness"],
+    3: ["collaboration", "localAvailability", "schedule", "motivation"],
+    4: ["creativeChallenge", "practicalTask"],
+    5: ["confirmedAccuracy", "confirmedOwnership"],
   };
 
   const goNext = async () => {
     const valid = await trigger(stepFields[step]);
-    if (valid) setStep((s) => Math.min(s + 1, applicationSteps.length - 1));
+    if (valid) setStep((s) => Math.min(s + 1, applicationSections.length - 1));
   };
   const goBack = () => setStep((s) => Math.max(s - 1, 0));
 
-  const onSubmit = async (data: FormValues) => {
-    void submitCreatorApplication({
+  const onSubmit = (data: FormValues) => {
+    const application = {
       fullName: data.fullName,
       phone: data.phone,
       email: data.email,
@@ -211,32 +268,82 @@ const Careers = () => {
       workSamples: data.workSamples || undefined,
       videoIdea: data.videoIdea,
       audienceInterest: data.audienceInterest,
+      resourcefulness: data.resourcefulness,
       collaboration: data.collaboration,
-      aboutYou: data.aboutYou,
+      localAvailability: data.localAvailability,
+      schedule: data.schedule,
       motivation: data.motivation,
-      confirmed: data.confirmed,
-    });
+      creativeChallenge: data.creativeChallenge,
+      practicalTask: data.practicalTask,
+      confirmedAccuracy: data.confirmedAccuracy,
+      confirmedOwnership: data.confirmedOwnership,
+      finalNotes: data.finalNotes || undefined,
+    };
+
+    // Built and opened synchronously so the browser still treats this as a
+    // user-initiated action — deferring it (await/timeout) risks the popup
+    // blocker swallowing the WhatsApp handoff.
+    const link = buildApplicationWhatsAppLink(application);
+    setWhatsappLink(link);
+    window.open(link, "_blank", "noopener,noreferrer");
+
+    // Persistence stays fire-and-forget; the WhatsApp handoff is the
+    // delivery path until a real backend exists.
+    void submitCreatorApplication(application);
+
+    setApplicantName(data.fullName);
     setSubmitted(true);
     reset();
   };
 
-  // --- Success screen -----------------------------------------
+  // --- Success screen (spec: "Thank you for applying!") ---------
   if (submitted) {
     return (
       <div className="container py-28 max-w-xl text-center">
         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/15">
           <PartyPopper className="text-primary" size={28} />
         </div>
-        <h1 className="font-serif-display text-3xl sm:text-4xl mb-4">Your application is in.</h1>
-        <p className="text-muted-foreground leading-relaxed mb-8">
-          Thank you for taking the time to apply to O Studio Innovations. We've received your
-          application and will be in touch at the email or phone number you provided if your work
-          looks like a fit for what we're building.
+        <h1 className="font-serif-display text-3xl sm:text-4xl mb-6">Thank you for applying!</h1>
+        <div className="space-y-4 text-muted-foreground leading-relaxed text-left">
+          <p>
+            Thank you{applicantName ? `, ${applicantName.split(" ")[0]}` : ""} for your interest in
+            collaborating with O Studio Innovations.
+          </p>
+          <p>
+            We appreciate your time, creativity, and willingness to share your ideas with us. Every
+            creative journey begins somewhere, and we believe that potential can come from different
+            backgrounds and levels of experience.
+          </p>
+          <p>
+            We will review your application and contact selected applicants regarding possible next
+            steps.
+          </p>
+          <p className="text-foreground">
+            Let's bring ideas to life, tell compelling stories, and create meaningful content
+            together.
+          </p>
+        </div>
+
+        <div className="mt-8 rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground space-y-1.5 text-left">
+          <p className="font-serif-display text-base text-foreground">O Studio Innovations</p>
+          <p>Email: info@ostudioinnovations.com</p>
+          <p>Phone / WhatsApp: +234 704 225 1787</p>
+          <p>Location: 174 Ikorodu Road, Elediye Bus Stop, Onipanu, Lagos.</p>
+        </div>
+
+        <p className="mt-6 text-xs text-muted-foreground">
+          The WhatsApp message with your answers just opened — press send so your application reaches
+          us.
         </p>
-        <p className="text-sm text-muted-foreground mb-8">
-          Every application is read. If it isn't a match right now, we may still reach out later.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+
+        <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+          {whatsappLink && (
+            <Button asChild variant="outline" className="rounded-full px-8">
+              <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
+                Didn't open? Send via WhatsApp
+              </a>
+            </Button>
+          )}
           <Button asChild className="rounded-full px-8">
             <a href="/">Return Home</a>
           </Button>
@@ -245,53 +352,35 @@ const Careers = () => {
     );
   }
 
-  const stepMeta = [
-    { title: "Tell us about yourself", purpose: "So we know who is applying and how to reach you." },
-    { title: "What you're interested in", purpose: "To understand your strengths and creative interests." },
-    { title: "Show us your creativity", purpose: "The most important part. Tell us how you think about content." },
-    { title: "Working together", purpose: "So we understand how you'd like to collaborate with us." },
-    { title: "Review your application", purpose: "Check everything over before you send it." },
-  ][step];
+  const section = applicationSections[step];
 
   return (
     <div>
       {/* HERO */}
       <section className="bg-hero-gradient py-28">
         <div className="container text-center">
-          <p className="text-xs tracking-widest-plus uppercase text-primary mb-6">Join O Studio</p>
-          <h1 className="font-serif-display text-4xl sm:text-6xl leading-tight max-w-3xl mx-auto">
-            Content Creator Application
-          </h1>
-          <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            O Studio Innovations is looking to connect with creative individuals interested in video
-            creation, video editing, and storytelling.
+          <p className="text-xs tracking-widest-plus uppercase text-primary mb-6">
+            O Studio Innovations
           </p>
-          <p className="mt-4 text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            If you have ideas, creativity, or a passion for bringing stories to life, we'd love to
-            hear from you.
+          <h1 className="font-serif-display text-4xl sm:text-6xl leading-tight max-w-3xl mx-auto">
+            Content Creator Application Form
+          </h1>
+          <p className="mt-6 font-serif-display text-xl sm:text-2xl">
+            <span className="text-gold-gradient">Creativity. Storytelling. Collaboration.</span>
           </p>
         </div>
       </section>
 
-      {/* REASSURANCE STRIP */}
+      {/* FORM DESCRIPTION */}
       <section className="border-b border-border">
-        <div className="container py-16">
-          <div className="grid sm:grid-cols-3 gap-5">
-            {applicationHighlights.map((item, i) => {
-              const Icon = highlightIcons[i];
-              return (
-                <div
-                  key={item.title}
-                  className="bg-card border border-border rounded-2xl p-6 shadow-card"
-                >
-                  <Icon className="text-primary mb-3" size={22} strokeWidth={1.5} />
-                  <p className="font-serif-display text-lg mb-2">{item.title}</p>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {item.description}
-                  </p>
-                </div>
-              );
-            })}
+        <div className="container max-w-3xl py-16">
+          <p className="text-xs tracking-widest-plus uppercase text-primary mb-5">
+            Form Description
+          </p>
+          <div className="space-y-4 text-muted-foreground leading-relaxed">
+            {formDescription.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
           </div>
         </div>
       </section>
@@ -301,16 +390,16 @@ const Careers = () => {
         <div className="container max-w-2xl">
           <div className="text-center mb-12">
             <p className="text-xs tracking-widest-plus uppercase text-primary mb-4">
-              Application Form
+              Section {step + 1} of {applicationSections.length}
             </p>
-            <h2 className="font-serif-display text-3xl sm:text-4xl">{stepMeta.title}</h2>
-            <p className="mt-4 text-muted-foreground">{stepMeta.purpose}</p>
+            <h2 className="font-serif-display text-3xl sm:text-4xl">{section.title}</h2>
+            <p className="mt-4 text-muted-foreground">{section.purpose}</p>
           </div>
 
           {/* Stepper */}
           <div className="flex items-center justify-between mb-12">
-            {applicationSteps.map((label, i) => (
-              <div key={label} className="flex-1 flex items-center">
+            {applicationSections.map((s, i) => (
+              <div key={s.short} className="flex-1 flex items-center">
                 <div className="flex flex-col items-center flex-1">
                   <div
                     className={cn(
@@ -325,10 +414,10 @@ const Careers = () => {
                     {i < step ? <Check size={14} /> : i + 1}
                   </div>
                   <span className="text-[11px] mt-2 text-muted-foreground hidden sm:block text-center px-1">
-                    {label}
+                    {s.short}
                   </span>
                 </div>
-                {i < applicationSteps.length - 1 && (
+                {i < applicationSections.length - 1 && (
                   <div className={cn("h-px flex-1 -mt-5", i < step ? "bg-primary" : "bg-border")} />
                 )}
               </div>
@@ -339,35 +428,51 @@ const Careers = () => {
             onSubmit={handleSubmit(onSubmit)}
             className="bg-card border border-border rounded-2xl p-8 sm:p-10 shadow-card"
           >
-            {/* STEP 0 — ABOUT YOU */}
+            {/* SECTION 1 — PERSONAL INFORMATION (Q1–Q4) */}
             {step === 0 && (
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="fullName">Full name</Label>
+                  <QuestionLabel number={1} htmlFor="fullName">
+                    Full Name
+                  </QuestionLabel>
                   <Input id="fullName" placeholder="Your name" {...register("fullName")} />
                   {errors.fullName && (
                     <p className="text-xs text-destructive">{errors.fullName.message}</p>
                   )}
                 </div>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone / WhatsApp number</Label>
-                    <Input id="phone" placeholder="+234..." {...register("phone")} />
-                    {errors.phone && (
-                      <p className="text-xs text-destructive">{errors.phone.message}</p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email address</Label>
-                    <Input id="email" type="email" placeholder="you@example.com" {...register("email")} />
-                    {errors.email && (
-                      <p className="text-xs text-destructive">{errors.email.message}</p>
-                    )}
-                  </div>
+                <div className="space-y-2">
+                  <QuestionLabel number={2} htmlFor="phone">
+                    Phone Number / WhatsApp Number
+                  </QuestionLabel>
+                  <Input id="phone" placeholder="+234..." {...register("phone")} />
+                  {errors.phone && <p className="text-xs text-destructive">{errors.phone.message}</p>}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="location">Where are you currently based?</Label>
-                  <Input id="location" placeholder="e.g. Gbagada Phase 1, Lagos" {...register("location")} />
+                  <QuestionLabel number={3} htmlFor="email">
+                    Email Address
+                  </QuestionLabel>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    {...register("email")}
+                  />
+                  {errors.email && (
+                    <p className="text-xs text-destructive">{errors.email.message}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <QuestionLabel number={4} htmlFor="location">
+                    Where Are You Currently Based?
+                  </QuestionLabel>
+                  <Input
+                    id="location"
+                    placeholder="e.g. Gbagada Phase 1, Lagos"
+                    {...register("location")}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Please indicate your city or area of residence.
+                  </p>
                   {errors.location && (
                     <p className="text-xs text-destructive">{errors.location.message}</p>
                   )}
@@ -375,11 +480,13 @@ const Careers = () => {
               </div>
             )}
 
-            {/* STEP 1 — CREATIVE INTERESTS */}
+            {/* SECTION 2 — YOUR CREATIVE INTERESTS (Q5–Q7) */}
             {step === 1 && (
               <div className="space-y-8">
                 <div className="space-y-3">
-                  <Label>Which area of content creation are you most interested in?</Label>
+                  <QuestionLabel number={5}>
+                    Which areas of content creation interest you the most?
+                  </QuestionLabel>
                   <Controller
                     name="interests"
                     control={form.control}
@@ -391,13 +498,16 @@ const Careers = () => {
                       />
                     )}
                   />
+                  <p className="text-xs text-muted-foreground">Select all that apply.</p>
                   {errors.interests && (
                     <p className="text-xs text-destructive">{errors.interests.message}</p>
                   )}
                 </div>
 
                 <div className="space-y-3">
-                  <Label>How would you describe your current experience?</Label>
+                  <QuestionLabel number={6}>
+                    How would you describe your current experience with content creation?
+                  </QuestionLabel>
                   <Controller
                     name="experience"
                     control={form.control}
@@ -415,7 +525,9 @@ const Careers = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <Label>What tools or equipment can you currently use?</Label>
+                  <QuestionLabel number={7}>
+                    What tools or equipment can you currently work with?
+                  </QuestionLabel>
                   <Controller
                     name="equipment"
                     control={form.control}
@@ -428,6 +540,7 @@ const Careers = () => {
                       />
                     )}
                   />
+                  <p className="text-xs text-muted-foreground">Select all that apply.</p>
                   {errors.equipment && (
                     <p className="text-xs text-destructive">{errors.equipment.message}</p>
                   )}
@@ -435,11 +548,13 @@ const Careers = () => {
               </div>
             )}
 
-            {/* STEP 2 — SHOW YOUR CREATIVITY */}
+            {/* SECTION 3 — YOUR CREATIVE PORTFOLIO (Q8–Q12) */}
             {step === 2 && (
               <div className="space-y-8">
                 <div className="space-y-3">
-                  <Label>Have you created, recorded, or edited any content before?</Label>
+                  <QuestionLabel number={8}>
+                    Have you ever recorded, edited, written, or contributed to a content project?
+                  </QuestionLabel>
                   <Controller
                     name="createdBefore"
                     control={form.control}
@@ -457,30 +572,35 @@ const Careers = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="workSamples">If you have samples of your work, share a link</Label>
+                  <QuestionLabel number={9} htmlFor="workSamples" optional>
+                    Share a sample of your work, if available.
+                  </QuestionLabel>
                   <Input
                     id="workSamples"
                     placeholder="TikTok, Instagram Reel, YouTube, Google Drive…"
                     {...register("workSamples")}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Optional — but if you have made something, we'd like to see it.
+                    You can share a TikTok video, Instagram Reel, YouTube video, Google Drive link, or
+                    another accessible portfolio link. If you do not have previous work, you can leave
+                    this blank.
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="videoIdea">
-                    If you could create a video for O Studio Innovations, what would your idea be?
-                  </Label>
+                  <QuestionLabel number={10} htmlFor="videoIdea">
+                    Imagine O Studio Innovations asks you to create a short video. What would your
+                    idea be?
+                  </QuestionLabel>
                   <Textarea
                     id="videoIdea"
                     rows={5}
-                    placeholder="Tell us briefly what the video would be about and how you would make it interesting to watch."
+                    placeholder="Describe your concept, what it communicates, who it appeals to, and how you'd make it interesting."
                     {...register("videoIdea")}
                   />
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-xs text-muted-foreground">
-                      This is one of the most important parts of your application.
+                      You do not need professional experience to answer this question.
                     </p>
                     <CharCount value={values.videoIdea} min={20} />
                   </div>
@@ -490,18 +610,19 @@ const Careers = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="audienceInterest">
-                    What do you think makes a video or story interesting to an audience?
-                  </Label>
+                  <QuestionLabel number={11} htmlFor="audienceInterest">
+                    In your opinion, what makes a video or story interesting enough for people to
+                    watch, engage with, or share?
+                  </QuestionLabel>
                   <Textarea
                     id="audienceInterest"
                     rows={5}
-                    placeholder="This is your chance to show how you think about content, even if you haven't made videos before."
+                    placeholder="Your creative thinking, storytelling instincts, and awareness of what connects with an audience."
                     {...register("audienceInterest")}
                   />
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-xs text-muted-foreground">
-                      There is no wrong answer — we want your perspective.
+                      We want to understand how you think about content.
                     </p>
                     <CharCount value={values.audienceInterest} min={20} />
                   </div>
@@ -509,19 +630,40 @@ const Careers = () => {
                     <p className="text-xs text-destructive">{errors.audienceInterest.message}</p>
                   )}
                 </div>
+
+                <div className="space-y-2">
+                  <QuestionLabel number={12} htmlFor="resourcefulness">
+                    What would you do if you had a good video idea but limited equipment or
+                    resources?
+                  </QuestionLabel>
+                  <Textarea
+                    id="resourcefulness"
+                    rows={5}
+                    placeholder="How you would approach the idea, solve possible challenges, or find a practical way to bring it to life."
+                    {...register("resourcefulness")}
+                  />
+                  <div className="flex items-center justify-end">
+                    <CharCount value={values.resourcefulness} min={20} />
+                  </div>
+                  {errors.resourcefulness && (
+                    <p className="text-xs text-destructive">{errors.resourcefulness.message}</p>
+                  )}
+                </div>
               </div>
             )}
 
-            {/* STEP 3 — COLLABORATION */}
+            {/* SECTION 4 — COLLABORATION AND AVAILABILITY (Q13–Q16) */}
             {step === 3 && (
               <div className="space-y-8">
                 <div className="space-y-3">
-                  <Label>What kind of collaboration are you interested in?</Label>
+                  <QuestionLabel number={13}>
+                    What type of collaboration are you most interested in?
+                  </QuestionLabel>
                   <Controller
                     name="collaboration"
                     control={form.control}
                     render={({ field }) => (
-                      <CheckCardGroup
+                      <SelectCardGroup
                         options={collaborationTypes}
                         value={field.value}
                         onChange={field.onChange}
@@ -533,35 +675,56 @@ const Careers = () => {
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="aboutYou">
-                    Tell us something about yourself that you think we should know.
-                  </Label>
-                  <Textarea
-                    id="aboutYou"
-                    rows={5}
-                    placeholder="Share your personality, interests, background, ambitions, or anything you feel is important for us to know."
-                    {...register("aboutYou")}
+                <div className="space-y-3">
+                  <QuestionLabel number={14}>
+                    Are you available to participate in content shoots or projects around Gbagada
+                    Phase 1, Lagos, when required?
+                  </QuestionLabel>
+                  <Controller
+                    name="localAvailability"
+                    control={form.control}
+                    render={({ field }) => (
+                      <SelectCardGroup
+                        options={localAvailabilityOptions}
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    )}
                   />
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-xs text-muted-foreground">
-                      Tell us anything you think we should know about you.
-                    </p>
-                    <CharCount value={values.aboutYou} min={20} />
-                  </div>
-                  {errors.aboutYou && (
-                    <p className="text-xs text-destructive">{errors.aboutYou.message}</p>
+                  {errors.localAvailability && (
+                    <p className="text-xs text-destructive">{errors.localAvailability.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <QuestionLabel number={15}>
+                    How would you describe your availability for content projects?
+                  </QuestionLabel>
+                  <Controller
+                    name="schedule"
+                    control={form.control}
+                    render={({ field }) => (
+                      <SelectCardGroup
+                        options={scheduleOptions}
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
+                  {errors.schedule && (
+                    <p className="text-xs text-destructive">{errors.schedule.message}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="motivation">
-                    Why would you like to collaborate with O Studio Innovations?
-                  </Label>
+                  <QuestionLabel number={16} htmlFor="motivation">
+                    Why would you like to collaborate with O Studio Innovations, and what do you hope
+                    to contribute?
+                  </QuestionLabel>
                   <Textarea
                     id="motivation"
                     rows={5}
-                    placeholder="Tell us what interests you about creating content with us and what you hope to contribute."
+                    placeholder="What interests you about working with us, what you would bring to the team, and what you would like to learn or achieve."
                     {...register("motivation")}
                   />
                   <div className="flex items-center justify-end">
@@ -574,9 +737,60 @@ const Careers = () => {
               </div>
             )}
 
-            {/* STEP 4 — REVIEW & CONFIRM */}
+            {/* SECTION 5 — YOUR CREATIVE CHALLENGE (Q17–Q18) */}
             {step === 4 && (
+              <div className="space-y-8">
+                <div className="space-y-2">
+                  <QuestionLabel number={17} htmlFor="creativeChallenge">
+                    If you could create one short video to capture people's attention, what would it
+                    be about, and how would you present it?
+                  </QuestionLabel>
+                  <Textarea
+                    id="creativeChallenge"
+                    rows={6}
+                    placeholder="A short skit, an educational video, a behind-the-scenes concept, a storytelling video, a social media trend adaptation — or any other original idea."
+                    {...register("creativeChallenge")}
+                  />
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-xs text-muted-foreground">
+                      Briefly explain how you would bring it to life.
+                    </p>
+                    <CharCount value={values.creativeChallenge} min={20} />
+                  </div>
+                  {errors.creativeChallenge && (
+                    <p className="text-xs text-destructive">{errors.creativeChallenge.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <QuestionLabel number={18}>
+                    Would you be willing to complete a short practical creative task as part of the
+                    selection process?
+                  </QuestionLabel>
+                  <Controller
+                    name="practicalTask"
+                    control={form.control}
+                    render={({ field }) => (
+                      <SelectCardGroup
+                        options={practicalTaskOptions}
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
+                  {errors.practicalTask && (
+                    <p className="text-xs text-destructive">{errors.practicalTask.message}</p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* SECTION 6 — FINAL CONFIRMATION (Q19–Q20) */}
+            {step === 5 && (
               <div className="space-y-6">
+                <p className="text-xs tracking-widest-plus uppercase text-primary">
+                  Review your answers
+                </p>
                 <dl className="divide-y divide-border rounded-xl border border-border overflow-hidden">
                   {[
                     ["Full name", values.fullName],
@@ -586,13 +800,18 @@ const Careers = () => {
                     ["Interested in", values.interests.join(", ")],
                     ["Experience", values.experience],
                     ["Tools / equipment", values.equipment.join(", ")],
-                    ["Created content before", values.createdBefore],
-                    values.workSamples ? ["Work samples", values.workSamples] : null,
-                    ["Video idea", values.videoIdea],
-                    ["What makes content interesting", values.audienceInterest],
-                    ["Collaboration", values.collaboration.join(", ")],
-                    ["About you", values.aboutYou],
-                    ["Why O Studio", values.motivation],
+                    ["Content experience", values.createdBefore],
+                    values.workSamples ? ["Work sample", values.workSamples] : null,
+                    ["Q10 — Short video idea", values.videoIdea],
+                    ["Q11 — What makes content interesting", values.audienceInterest],
+                    ["Q12 — Good idea, limited resources", values.resourcefulness],
+                    ["Q13 — Collaboration type", values.collaboration],
+                    ["Q14 — Available around Gbagada", values.localAvailability],
+                    ["Q15 — Schedule", values.schedule],
+                    ["Q16 — Why O Studio", values.motivation],
+                    ["Q17 — One attention-grabbing video", values.creativeChallenge],
+                    ["Q18 — Practical task", values.practicalTask],
+                    values.finalNotes ? ["Q20 — Anything else", values.finalNotes] : null,
                   ]
                     .filter((row): row is [string, string] => Boolean(row))
                     .map(([label, val]) => (
@@ -600,18 +819,20 @@ const Careers = () => {
                         key={label}
                         className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4 p-4 text-sm"
                       >
-                        <dt className="sm:w-48 shrink-0 text-muted-foreground">{label}</dt>
+                        <dt className="sm:w-56 shrink-0 text-muted-foreground">{label}</dt>
                         <dd className="text-foreground whitespace-pre-line">{val}</dd>
                       </div>
                     ))}
                 </dl>
 
-                <div className="rounded-xl border border-border bg-background/40 p-5">
+                {/* Q19 — Applicant Declaration */}
+                <div className="space-y-3">
+                  <QuestionLabel number={19}>Applicant Declaration</QuestionLabel>
                   <Controller
-                    name="confirmed"
+                    name="confirmedAccuracy"
                     control={form.control}
                     render={({ field }) => (
-                      <label className="flex items-start gap-3 cursor-pointer">
+                      <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-border bg-background/40 p-4">
                         <input
                           type="checkbox"
                           checked={field.value}
@@ -619,15 +840,50 @@ const Careers = () => {
                           className="mt-0.5 h-4 w-4 shrink-0 rounded-sm border border-primary accent-[hsl(var(--primary))]"
                         />
                         <span className="text-sm text-foreground/85 leading-relaxed">
-                          I confirm that the information I've provided is accurate and that any work
-                          samples I share are mine or that I have permission to share them.
+                          I confirm that the information provided in this application is accurate to
+                          the best of my knowledge.
                         </span>
                       </label>
                     )}
                   />
-                  {errors.confirmed && (
-                    <p className="text-xs text-destructive mt-2">{errors.confirmed.message}</p>
+                  {errors.confirmedAccuracy && (
+                    <p className="text-xs text-destructive">{errors.confirmedAccuracy.message}</p>
                   )}
+                  <Controller
+                    name="confirmedOwnership"
+                    control={form.control}
+                    render={({ field }) => (
+                      <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-border bg-background/40 p-4">
+                        <input
+                          type="checkbox"
+                          checked={field.value}
+                          onChange={(e) => field.onChange(e.target.checked)}
+                          className="mt-0.5 h-4 w-4 shrink-0 rounded-sm border border-primary accent-[hsl(var(--primary))]"
+                        />
+                        <span className="text-sm text-foreground/85 leading-relaxed">
+                          I confirm that any work samples I submit are my own or that I have
+                          permission to share them.
+                        </span>
+                      </label>
+                    )}
+                  />
+                  {errors.confirmedOwnership && (
+                    <p className="text-xs text-destructive">{errors.confirmedOwnership.message}</p>
+                  )}
+                </div>
+
+                {/* Q20 — anything else (optional) */}
+                <div className="space-y-2">
+                  <QuestionLabel number={20} htmlFor="finalNotes" optional>
+                    Is there anything else you would like us to know about you, your creativity, or
+                    your interest in joining our projects?
+                  </QuestionLabel>
+                  <Textarea
+                    id="finalNotes"
+                    rows={4}
+                    placeholder="Anything else you'd like to share…"
+                    {...register("finalNotes")}
+                  />
                 </div>
               </div>
             )}
@@ -642,7 +898,7 @@ const Careers = () => {
                 <span />
               )}
 
-              {step < applicationSteps.length - 1 ? (
+              {step < applicationSections.length - 1 ? (
                 <Button type="button" onClick={goNext} className="rounded-full px-6">
                   Continue <ArrowRight className="ml-2" size={15} />
                 </Button>
@@ -658,16 +914,5 @@ const Careers = () => {
     </div>
   );
 };
-
-/** Live character counter for the long-answer questions. */
-function CharCount({ value, min }: { value: string; min: number }) {
-  const length = (value ?? "").trim().length;
-  const short = length < min;
-  return (
-    <p className={cn("text-xs shrink-0", short ? "text-muted-foreground" : "text-primary")}>
-      {length} characters
-    </p>
-  );
-}
 
 export default Careers;

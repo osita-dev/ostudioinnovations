@@ -27,10 +27,11 @@ const About = () => {
           </p>
           <p className="text-lg leading-relaxed text-foreground/90 mb-6">
             We built O Studio differently. Media and events, film and production, content and
-            entertainment, technology, and creative services all live under one studio, run by one
-            connected process. That means a wedding film, a documentary, a brand identity, and a
-            business website can all be handled with the same standard of care — and, when a project
-            calls for more than one of them, without the usual friction of coordinating across vendors.
+            entertainment, technology, creative services, and studio rentals all live under one
+            studio, run by one connected process. That means a wedding film, a documentary, a brand
+            identity, a business website, and a studio session can all be handled with the same
+            standard of care — and, when a project calls for more than one of them, without the usual
+            friction of coordinating across vendors.
           </p>
           <p className="text-lg leading-relaxed text-foreground/90">
             Our name reflects that intent: a studio built around innovation, not just output. Every
@@ -44,11 +45,11 @@ const About = () => {
         <div className="container">
           <SectionHeading
             eyebrow="How It Fits Together"
-            title="One studio, five connected capabilities"
+            title="One studio, six connected capabilities"
             align="center"
             className="mb-14"
           />
-          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-5">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
             {serviceCategories.map((s) => {
               const Icon = getIcon(s.icon);
               return (
@@ -65,7 +66,7 @@ const About = () => {
       <section className="py-24 border-t border-border">
         <div className="container grid sm:grid-cols-3 gap-10 text-center max-w-3xl mx-auto">
           <div>
-            <p className="font-serif-display text-4xl text-primary mb-2">5</p>
+            <p className="font-serif-display text-4xl text-primary mb-2">6</p>
             <p className="text-sm text-muted-foreground">Connected capabilities</p>
           </div>
           <div>

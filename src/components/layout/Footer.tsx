@@ -60,10 +60,10 @@ export function Footer() {
                 <FaMapMarkerAlt size={15} className="text-primary shrink-0" /> 174 Ikorodu Rd, Elediye Bus Stop, Onipanu, Lagos 102216, Lagos
               </li>
               <li className="flex items-center gap-3 pt-1">
-                <a href="https://www.youtube.com/@ostudioinnovations" aria-label="Facebook" className="text-muted-foreground hover:text-primary transition-colors">
+                <a href="https://www.youtube.com/@ostudioinnovations" aria-label="YouTube" className="text-muted-foreground hover:text-primary transition-colors">
                   <Youtube size={18} />
                 </a>
-                <a href="https://www.tiktok.com/@ostudioinnovations?_r=1&_t=ZN-98zmnqYiFks" aria-label="Facebook" className="text-muted-foreground hover:text-primary transition-colors">
+                <a href="https://www.tiktok.com/@ostudioinnovations?_r=1&_t=ZN-98zmnqYiFks" aria-label="TikTok" className="text-muted-foreground hover:text-primary transition-colors">
                   <FaTiktok size={18} />
                 </a>
                 <a href="#" aria-label="Instagram" className="text-muted-foreground hover:text-primary transition-colors">
@@ -72,7 +72,7 @@ export function Footer() {
                 <a href="#" aria-label="Facebook" className="text-muted-foreground hover:text-primary transition-colors">
                   <Facebook size={18} />
                 </a>
-                <a href="#" aria-label="Facebook" className="text-muted-foreground hover:text-primary transition-colors">
+                <a href="#" aria-label="WhatsApp" className="text-muted-foreground hover:text-primary transition-colors">
                   <FaWhatsapp size={18} />
                 </a>
               </li>

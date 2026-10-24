@@ -9,8 +9,8 @@ import { journalPosts } from "@/data/journal";
 import { getIcon } from "@/lib/icons";
 
 const differentiators = [
-  "One studio, five connected capabilities — not five disconnected vendors",
-  "Real production quality across media, film, content, tech, and design",
+  "One studio, six connected capabilities — not six disconnected vendors",
+  "Real production quality across media, film, content, tech, design, and studio space",
   "A structured process, from first inquiry to final delivery",
   "Work you can see — not just services you're told about",
 ];
@@ -35,10 +35,24 @@ const Home = () => {
           </h1>
           <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.1s" }}>
             O Studio Innovations sits at the intersection of creative production and technology —
-            covering media &amp; events, film, content, technology, and design under one roof, so your
-            vision doesn't get lost between vendors.
+            covering media &amp; events, film, content, technology, design, and studio rentals under
+            one roof, so your vision doesn't get lost between vendors.
           </p>
-          <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center animate-fade-up" style={{ animationDelay: "0.15s" }}>
+          <p className="mt-6 font-serif-display text-xl sm:text-2xl text-foreground/90 animate-fade-up" style={{ animationDelay: "0.15s" }}>
+            From your best moments to your biggest dreams —{" "}
+            <span className="text-gold-gradient">we make them real.</span>
+          </p>
+          <p className="mt-4 text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: "0.2s" }}>
+            O Studio Innovations brings moments, stories and ideas to life through creative media,
+            digital solutions, professional production and innovative experiences.
+          </p>
+          <div className="mt-4 animate-fade-up" style={{ animationDelay: "0.25s" }}>
+            <span className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
+              Serving clients across Nigeria and internationally.
+            </span>
+          </div>
+          <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center animate-fade-up" style={{ animationDelay: "0.3s" }}>
             <Button asChild size="lg" className="rounded-full px-8">
               <Link to="/portfolio">
                 Explore Our Work <ArrowRight className="ml-2" size={16} />
@@ -87,7 +101,7 @@ const Home = () => {
         <div className="container">
           <SectionHeading
             eyebrow="What We Do"
-            title="Five capabilities. One studio."
+            title="Six capabilities. One studio."
             description="Every service connects back to the same goal: bringing your idea to life, properly."
             align="center"
             className="mb-14"

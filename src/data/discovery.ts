@@ -39,7 +39,7 @@ export const discoveryOptions: DiscoveryOption[] = [
   {
     id: "brand",
     prompt: "I want to improve my brand.",
-    description: "Visual identity, branded materials, printing, or design work.",
+    description: "Visual identity, corporate branding, gift packs, or design work.",
     recommendedCategories: ["creative-services"],
     icon: "Sparkles",
   },
@@ -49,6 +49,13 @@ export const discoveryOptions: DiscoveryOption[] = [
     description: "An AI-powered or digital solution for your business.",
     recommendedCategories: ["technology"],
     icon: "Bot",
+  },
+  {
+    id: "rentals",
+    prompt: "I need a studio space.",
+    description: "Podcast/content rooms, photo studio, or film set — booked by the session.",
+    recommendedCategories: ["studio-rental"],
+    icon: "Settings",
   },
   {
     id: "other",

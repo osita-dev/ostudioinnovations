@@ -11,6 +11,7 @@ import {
   Sparkles,
   Bot,
   MessageCircle,
+  Settings,
   type LucideIcon,
 } from "lucide-react";
 
@@ -27,6 +28,7 @@ export const iconMap: Record<string, LucideIcon> = {
   Sparkles,
   Bot,
   MessageCircle,
+  Settings,
 };
 
 export function getIcon(name: string): LucideIcon {

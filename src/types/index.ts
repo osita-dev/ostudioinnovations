@@ -9,7 +9,8 @@ export type CategorySlug =
   | "film-production"
   | "content-entertainment"
   | "technology"
-  | "creative-services";
+  | "creative-services"
+  | "studio-rental";
 
 export interface ServiceCategory {
   id: string;
@@ -77,30 +78,38 @@ export interface DiscoveryOption {
 }
 
 // Content creator application — submitted via the /careers page.
-// Mirrors the 15-question application form, grouped by section.
+// Mirrors the 20-question application form, grouped into the
+// form's six sections.
 export interface CreatorApplication {
   id: string;
   createdAt: string;
-  // Section 1 — personal information
+  // Section 1 — personal information (Q1–Q4)
   fullName: string;
   phone: string;
   email: string;
   location: string;
-  // Section 2 — creative interests
+  // Section 2 — creative interests (Q5–Q7)
   interests: string[];
   experience: string;
   equipment: string[];
-  // Section 3 — creativity
+  // Section 3 — creative portfolio (Q8–Q12)
   createdBefore: string;
   workSamples?: string;
   videoIdea: string;
   audienceInterest: string;
-  // Section 4 — collaboration
-  collaboration: string[];
-  aboutYou: string;
+  resourcefulness: string;
+  // Section 4 — collaboration and availability (Q13–Q16)
+  collaboration: string;
+  localAvailability: string;
+  schedule: string;
   motivation: string;
-  // Section 5 — confirmation
-  confirmed: boolean;
+  // Section 5 — creative challenge (Q17–Q18)
+  creativeChallenge: string;
+  practicalTask: string;
+  // Section 6 — final confirmation (Q19–Q20)
+  confirmedAccuracy: boolean;
+  confirmedOwnership: boolean;
+  finalNotes?: string;
   status: "new" | "reviewing" | "shortlisted" | "contacted" | "closed";
 }
 
