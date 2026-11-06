@@ -10,7 +10,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { submitCreatorApplication } from "@/lib/applications";
-import { buildApplicationWhatsAppLink } from "@/lib/whatsapp";
 import {
   formDescription,
   creativeInterests,
@@ -195,10 +194,12 @@ function CharCount({ value, min }: { value: string; min: number }) {
 const Careers = () => {
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
-  const [whatsappLink, setWhatsappLink] = useState<string | null>(null);
   // Kept so the success screen can address the applicant by name
   // after the form has been reset.
   const [applicantName, setApplicantName] = useState("");
+  // Supabase delivery states — success screen only after the row exists.
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -255,7 +256,7 @@ const Careers = () => {
   };
   const goBack = () => setStep((s) => Math.max(s - 1, 0));
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     const application = {
       fullName: data.fullName,
       phone: data.phone,
@@ -280,20 +281,27 @@ const Careers = () => {
       finalNotes: data.finalNotes || undefined,
     };
 
-    // Built and opened synchronously so the browser still treats this as a
-    // user-initiated action — deferring it (await/timeout) risks the popup
-    // blocker swallowing the WhatsApp handoff.
-    const link = buildApplicationWhatsAppLink(application);
-    setWhatsappLink(link);
-    window.open(link, "_blank", "noopener,noreferrer");
-
-    // Persistence stays fire-and-forget; the WhatsApp handoff is the
-    // delivery path until a real backend exists.
-    void submitCreatorApplication(application);
-
-    setApplicantName(data.fullName);
-    setSubmitted(true);
-    reset();
+    // Supabase is the ONLY submission path (stage 09 / Phase C): the
+    // application must land in `creator_applications` — the single view in
+    // the O Studio Admin — before we congratulate the applicant. The form
+    // data is kept on failure so they can retry.
+    setSending(true);
+    setSendError(null);
+    try {
+      await submitCreatorApplication(application);
+      setApplicantName(data.fullName);
+      setSubmitted(true);
+      reset();
+    } catch (err) {
+      console.error("[O Studio] application failed to send", err);
+      setSendError(
+        err instanceof Error
+          ? err.message
+          : "We couldn't send your application just now — please try again."
+      );
+    } finally {
+      setSending(false);
+    }
   };
 
   // --- Success screen (spec: "Thank you for applying!") ---------
@@ -332,18 +340,11 @@ const Careers = () => {
         </div>
 
         <p className="mt-6 text-xs text-muted-foreground">
-          The WhatsApp message with your answers just opened — press send so your application reaches
-          us.
+          Your application is in — no further action needed on your side. We will be in touch if
+          your profile matches what we are casting for.
         </p>
 
         <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-          {whatsappLink && (
-            <Button asChild variant="outline" className="rounded-full px-8">
-              <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-                Didn't open? Send via WhatsApp
-              </a>
-            </Button>
-          )}
           <Button asChild className="rounded-full px-8">
             <a href="/">Return Home</a>
           </Button>
@@ -363,7 +364,7 @@ const Careers = () => {
             O Studio Innovations
           </p>
           <h1 className="font-serif-display text-4xl sm:text-6xl leading-tight max-w-3xl mx-auto">
-            Content Creator Application Form
+            Content Creator / Editor Application Form
           </h1>
           <p className="mt-6 font-serif-display text-xl sm:text-2xl">
             <span className="text-gold-gradient">Creativity. Storytelling. Collaboration.</span>
@@ -888,6 +889,16 @@ const Careers = () => {
               </div>
             )}
 
+            {/* SEND ERROR — form data is kept, applicant can retry */}
+            {sendError && (
+              <div
+                role="alert"
+                className="mt-6 rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive"
+              >
+                <p>{sendError}</p>
+              </div>
+            )}
+
             {/* NAV BUTTONS */}
             <div className="flex items-center justify-between mt-10">
               {step > 0 ? (
@@ -903,8 +914,8 @@ const Careers = () => {
                   Continue <ArrowRight className="ml-2" size={15} />
                 </Button>
               ) : (
-                <Button type="submit" className="rounded-full px-8">
-                  Submit Application
+                <Button type="submit" className="rounded-full px-8" disabled={sending}>
+                  {sending ? "Sending…" : "Submit Application"}
                 </Button>
               )}
             </div>

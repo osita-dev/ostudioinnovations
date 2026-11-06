@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.ostudio.com/sitemap.xml
+Sitemap: https://www.ostudioinnovations.com/sitemap.xml

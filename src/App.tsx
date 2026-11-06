@@ -12,6 +12,7 @@ import Portfolio from "./pages/Portfolio";
 import ProjectDetail from "./pages/ProjectDetail";
 import Discover from "./pages/Discover";
 import StartProject from "./pages/StartProject";
+import StudioRental from "./pages/StudioRental";
 import Careers from "./pages/Careers";
 import FAQ from "./pages/FAQ";
 import About from "./pages/About";
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/portfolio/:slug" element={<ProjectDetail />} />
             <Route path="/discover" element={<Discover />} />
             <Route path="/start-project" element={<StartProject />} />
+            <Route path="/studio-rental" element={<StudioRental />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/about" element={<About />} />

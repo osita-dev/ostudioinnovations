@@ -1,65 +1,52 @@
 import type { ProjectInquiry } from "@/types";
+import { getServiceBySlug } from "@/data/services";
+import { NOT_CONNECTED_MESSAGE, supabase } from "@/lib/supabase";
 
 // ============================================================
-// APPLICATION LAYER — Project Inquiry handling
+// APPLICATION LAYER — Project Inquiries (Start a Project)
 //
-// This implements the Section 7 submission behavior:
-//   1. Validate (handled by the form's zod schema)
-//   2. Submit the inquiry
-//   3. Store the project request
-//   4. Confirm to the user
-//   5. Make the request available to O Studio
-//   6. Trigger notifications where implemented
+// Storage is Supabase (stage 09 / 13 Phase C1): every brief is
+// INSERTed into `project_inquiries`, which is what the O Studio
+// Admin dashboard reads. The localStorage stub is gone.
 //
-// PHASE NOTE: There is no live backend in this stage of the
-// build, so step 3/5 are implemented with a local persistence
-// stub (localStorage) standing in for the future Data Layer
-// (Section 10). This keeps the real request/response contract
-// intact — swapping this module for a real API call (e.g.
-// POST /api/inquiries) is a drop-in replacement later, with no
-// changes needed to the form or UI layer.
+// Failure contract: THROWS a plain-English error — StartProject
+// keeps the visitor's answers, shows the error inline, and lets
+// them retry. The brief is never lost.
+//
+// Supabase is the ONLY submission path (stage 03): no WhatsApp
+// handoff exists anywhere — the admin dashboard is the single
+// view for O Studio.
 // ============================================================
 
-const STORAGE_KEY = "ostudio_project_inquiries";
+type InquiryInput = Omit<ProjectInquiry, "id" | "createdAt" | "status">;
 
-function readInquiries(): ProjectInquiry[] {
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as ProjectInquiry[]) : [];
-  } catch {
-    return [];
+export async function submitProjectInquiry(data: InquiryInput): Promise<void> {
+  if (!supabase) {
+    console.error("[O Studio] Supabase env missing — see .env.example");
+    throw new Error(NOT_CONNECTED_MESSAGE);
   }
-}
 
-function writeInquiries(inquiries: ProjectInquiry[]) {
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(inquiries));
-  } catch {
-    // Storage unavailable (e.g. private browsing) — fail silently,
-    // the inquiry is still logged to console for this phase.
-  }
-}
+  // Store the readable service name ("Film & Production"), not the
+  // URL slug — matches how the admin displays and seeds this field.
+  const serviceName = getServiceBySlug(data.service)?.name ?? data.service;
 
-export function submitProjectInquiry(
-  data: Omit<ProjectInquiry, "id" | "createdAt" | "status">
-): ProjectInquiry {
-  const inquiry: ProjectInquiry = {
-    ...data,
-    id: `inq-${Date.now()}`,
-    createdAt: new Date().toISOString(),
+  const { error } = await supabase.from("project_inquiries").insert({
+    service: serviceName,
+    project_type: data.projectType,
+    event_date: data.date ?? null,
+    location: data.location ?? null,
+    expected_guests: data.expectedGuests ?? null,
+    budget_range: data.budgetRange,
+    description: data.description,
+    additional_requirements: data.additionalRequirements ?? null,
+    name: data.name,
+    phone: data.phone,
+    email: data.email,
     status: "new",
-  };
+  });
 
-  const existing = readInquiries();
-  writeInquiries([...existing, inquiry]);
-
-  // Stand-in for a real notification trigger (email/Slack/CRM webhook).
-  // eslint-disable-next-line no-console
-  console.info("[O Studio] New structured project inquiry received:", inquiry);
-
-  return inquiry;
-}
-
-export function getStoredInquiries(): ProjectInquiry[] {
-  return readInquiries();
+  if (error) {
+    console.error("[O Studio] inquiry insert failed:", error.message);
+    throw new Error(NOT_CONNECTED_MESSAGE);
+  }
 }

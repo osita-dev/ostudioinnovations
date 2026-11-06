@@ -126,8 +126,17 @@ const ServiceDetail = () => {
                 ))}
               </ul>
               <Button asChild size="lg" className="w-full rounded-full">
-                <Link to={`/start-project?service=${service.slug}`}>
-                  Request This Service <ArrowRight className="ml-2" size={16} />
+                <Link
+                  to={
+                    service.slug === "studio-rental"
+                      ? "/studio-rental"
+                      : `/start-project?service=${service.slug}`
+                  }
+                >
+                  {service.slug === "studio-rental"
+                    ? "Book The Studio"
+                    : "Request This Service"}{" "}
+                  <ArrowRight className="ml-2" size={16} />
                 </Link>
               </Button>
               <Button asChild size="lg" variant="ghost" className="w-full rounded-full mt-2">

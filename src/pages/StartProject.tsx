@@ -6,7 +6,6 @@ import { z } from "zod";
 import { Check, ArrowRight, ArrowLeft, PartyPopper } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { buildWhatsAppLink } from "@/lib/whatsapp";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
@@ -59,7 +58,9 @@ const StartProject = () => {
   const preselected = searchParams.get("service") ?? "";
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
-  const [whatsappLink, setWhatsappLink] = useState<string | null>(null);
+  // Supabase delivery states — confirmation only after the row exists.
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
@@ -99,26 +100,38 @@ const StartProject = () => {
     if (valid) setStep((s) => Math.min(s + 1, steps.length - 1));
   };
   const goBack = () => setStep((s) => Math.max(s - 1, 0));
-  const onSubmit = (values: FormValues) => {
-    submitProjectInquiry({
-      name: values.name,
-      phone: values.phone,
-      email: values.email,
-      service: values.service as CategorySlug,
-      projectType: values.projectType,
-      date: values.date || undefined,
-      location: values.location || undefined,
-      expectedGuests: values.expectedGuests || undefined,
-      budgetRange: values.budgetRange,
-      description: values.description,
-      additionalRequirements: values.additionalRequirements || undefined,
-    });
-
-    const link = buildWhatsAppLink(values);
-    setWhatsappLink(link);
-    window.open(link, "_blank", "noopener,noreferrer");
-
-    setSubmitted(true);
+  const onSubmit = async (values: FormValues) => {
+    // Supabase is the ONLY submission path (stage 09 / Phase C): the brief
+    // must land in `project_inquiries` — the single view in the O Studio
+    // Admin — before we confirm. The visitor's answers are kept on failure
+    // so they can retry.
+    setSending(true);
+    setSendError(null);
+    try {
+      await submitProjectInquiry({
+        name: values.name,
+        phone: values.phone,
+        email: values.email,
+        service: values.service as CategorySlug,
+        projectType: values.projectType,
+        date: values.date || undefined,
+        location: values.location || undefined,
+        expectedGuests: values.expectedGuests || undefined,
+        budgetRange: values.budgetRange,
+        description: values.description,
+        additionalRequirements: values.additionalRequirements || undefined,
+      });
+      setSubmitted(true);
+    } catch (err) {
+      console.error("[O Studio] project request failed to send", err);
+      setSendError(
+        err instanceof Error
+          ? err.message
+          : "We couldn't send your request just now — please try again."
+      );
+    } finally {
+      setSending(false);
+    }
   };
 
   const values = watch();
@@ -136,13 +149,6 @@ const StartProject = () => {
           will follow up at {values.email} or {values.phone} shortly to discuss next steps.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          {whatsappLink && (
-            <Button asChild variant="outline" className="rounded-full px-8">
-              <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-                Didn't open? Send via WhatsApp
-              </a>
-            </Button>
-          )}
           <Button asChild className="rounded-full px-8">
             <a href="/">Return Home</a>
           </Button>
@@ -359,6 +365,16 @@ const StartProject = () => {
             </div>
           )}
 
+          {/* SEND ERROR — answers are kept so the visitor can retry */}
+          {sendError && (
+            <div
+              role="alert"
+              className="mt-6 rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive"
+            >
+              <p>{sendError}</p>
+            </div>
+          )}
+
           {/* NAV BUTTONS */}
           <div className="flex items-center justify-between mt-10">
             {step > 0 ? (
@@ -372,8 +388,8 @@ const StartProject = () => {
                 Continue <ArrowRight className="ml-2" size={15} />
               </Button>
             ) : (
-              <Button type="submit" className="rounded-full px-8">
-                Submit Project Request
+              <Button type="submit" className="rounded-full px-8" disabled={sending}>
+                {sending ? "Sending…" : "Submit Project Request"}
               </Button>
             )}
           </div>
