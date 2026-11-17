@@ -18,6 +18,7 @@ import FAQ from "./pages/FAQ";
 import About from "./pages/About";
 import Journal from "./pages/Journal";
 import JournalPost from "./pages/JournalPost";
+import Feedback from "./pages/Feedback";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,8 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/journal" element={<Journal />} />
             <Route path="/journal/:slug" element={<JournalPost />} />
+            {/* Link-only page (noindex, not in the nav) — launch feedback */}
+            <Route path="/feedback" element={<Feedback />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Route>

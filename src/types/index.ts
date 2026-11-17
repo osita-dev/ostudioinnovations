@@ -113,6 +113,36 @@ export interface CreatorApplication {
   status: "new" | "reviewing" | "shortlisted" | "contacted" | "closed";
 }
 
+// Launch feedback — submitted via the /feedback page after the
+// soft launch of the innovation studio. One row per guest.
+export interface FeedbackResponse {
+  id: string;
+  createdAt: string;
+  guestId?: string; // ?id= on personalised links — matches the guest list
+  name?: string;
+  phone?: string;
+  // Q1–Q2
+  howHeard?: string;
+  howHeardOther?: string; // free text when Q1 = "Other"
+  rating: number; // required, 1–5
+  // Q3–Q5
+  whatWeDo?: string;
+  topService?: string;
+  stoodOut?: string;
+  // Q6–Q8
+  doBetter?: string;
+  expectedMissing?: string;
+  addOneThing?: string;
+  // Q9–Q10
+  wouldUse?: string;
+  whatWouldChange?: string; // revealed when Q9 = "Maybe" / "Not yet"
+  anythingElse?: string;
+  questions?: string; // "Any questions for us?" (optional)
+  // Consent — required, nothing is assumed
+  photoConsent: string;
+  contactConsent?: string;
+}
+
 // Structured project inquiry — matches the "Project Inquiry" entity
 export interface ProjectInquiry {
   id: string;

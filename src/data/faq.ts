@@ -88,4 +88,46 @@ export const faqItems: FAQItem[] = [
       "Yes. We work on AI-powered and digital solutions as part of our Technology service. Share what you're trying to solve or automate in your project request and we'll advise on the right approach.",
     category: "services",
   },
+  {
+    id: "faq-012",
+    question: "What's the difference between studio rental and a studio booking?",
+    answer:
+      "Studio rental is the product — the space you hire by the session. A booking is how you reserve it: a request that holds your slot. You send the space, date, and time you need, and we reply with availability and a quote.",
+    category: "booking",
+  },
+  {
+    id: "faq-013",
+    question: "How do I book the studio?",
+    answer:
+      "Send a booking request through the Studio Rental page with your space, date, time window, and what you're shooting. We check availability and reply with confirmation and a quote. Your slot is held once you confirm.",
+    category: "booking",
+  },
+  {
+    id: "faq-014",
+    question: "Can I bring my own crew and equipment?",
+    answer:
+      "Yes — choose Space Only on the booking form. You bring your own crew and gear, and we provide the room, the set, lighting and power, setup guidance, and a technician on call if you want one.",
+    category: "services",
+  },
+  {
+    id: "faq-015",
+    question: "Do you provide crew and equipment?",
+    answer:
+      "Yes — choose With O Studio on the booking form. Our crew and equipment shoot your session and we deliver the finished files. Tell us what you need delivered, where it will be used, and how soon you need it.",
+    category: "services",
+  },
+  {
+    id: "faq-016",
+    question: "Do I pay when I submit a booking request?",
+    answer:
+      "No. Nothing is charged when you send the request. We reply with availability and a quote first, and you confirm before anything is booked.",
+    category: "pricing",
+  },
+  {
+    id: "faq-017",
+    question: "How far in advance should I book the studio?",
+    answer:
+      "Send your request as early as you can — studio slots are confirmed in the order requests arrive, and the sooner we have your date the more likely it is to be free. Same-week requests are worth sending anyway.",
+    category: "booking",
+  },
 ];

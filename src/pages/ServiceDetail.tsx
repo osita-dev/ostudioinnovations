@@ -148,8 +148,16 @@ const ServiceDetail = () => {
       </section>
 
       <CTABanner
-        title={`Ready to start your ${service.shortName.toLowerCase()} project?`}
-        description="Tell us the details and O Studio will follow up with a tailored plan."
+        title={
+          service.slug === "studio-rental"
+            ? "Ready to hold a studio slot?"
+            : `Ready to start your ${service.shortName.toLowerCase()} project?`
+        }
+        description={
+          service.slug === "studio-rental"
+            ? "Send the space, date, and time you need — O Studio replies with availability and a quote."
+            : "Tell us the details and O Studio will follow up with a tailored plan."
+        }
       />
     </div>
   );

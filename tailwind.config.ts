@@ -14,6 +14,18 @@ export default {
     },
     extend: {
       colors: {
+        // O Studio brand palette (hex → HSL)
+        brand: {
+          milk: "hsl(80 100% 98.8%)",        // #FDFFF9 Signature Milk White
+          champagne: "hsl(40 47.4% 92.5%)",  // #F5EFE3 Warm Champagne
+          beige: "hsl(37.5 42.1% 85.1%)",    // #E9DDC9 Soft Beige
+          gray: "hsl(30 4% 96%)",            // #F5F4F4 Light Gray
+          gold: "hsl(42.6 100% 42.5%)",      // #D99A00 Signature Gold (accent only)
+          antique: "hsl(42.7 88.7% 38.2%)",  // #B8860B Antique Gold (accent only)
+          charcoal: "hsl(30 5.7% 13.7%)",    // #252321 Soft Charcoal
+          black: "hsl(40 9.7% 6.1%)",        // #11100E Rich Black
+          white: "hsl(0 0% 100%)",           // #FFFFFF Pure White
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
- <!-- #FFD400 -->
+ <!-- #B8860B Antique Gold -->
 <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="920" height="590" viewBox="0 0 920.000000 590.000000"
  preserveAspectRatio="xMidYMid meet">
@@ -10,7 +10,7 @@ Created by potrace 1.16, written by Peter Selinger 2001-2019
 </metadata>
 <rect x="0" y="0" width="920" height="590" fill="none"/>
 <g transform="translate(0.000000,590.000000) scale(0.100000,-0.100000)"
-fill="#FFD400" stroke="none">
+fill="#B8860B" stroke="none">
 <path d="M2655 5649 c-679 -82 -1261 -425 -1652 -974 -181 -255 -329 -576
 -402 -875 -173 -705 -97 -1436 211 -2055 187 -375 446 -668 783 -888 375 -245
 815 -367 1325 -367 371 0 686 61 995 191 l80 34 -225 5 -225 5 -77 -37 c-170

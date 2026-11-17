@@ -4,8 +4,8 @@
   "description": "Creative. Digital. Production. Where creativity meets innovation.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#2E2910",
-  "theme_color": "#FFD400",
+  "background_color": "#FDFFF9",
+  "theme_color": "#D99A00",
   "icons": [
     { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
   ]

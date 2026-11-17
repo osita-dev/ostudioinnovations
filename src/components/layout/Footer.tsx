@@ -5,14 +5,14 @@ import { serviceCategories } from "@/data/services";
 
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-background">
+    <footer className="border-t border-border bg-brand-black">
       <div className="container py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <div className="md:col-span-1">
             <Link to="/" aria-label="O Studio Innovations home">
               <img src="/OstudioInnovation.svg" alt="O Studio Innovations" className="h-16 w-auto object-contain" />
             </Link>
-            <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
+            <p className="mt-4 text-sm text-white/70 leading-relaxed">
               Creative. Digital. Production.
               <br />
               Where creativity meets innovation.
@@ -20,13 +20,13 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-xs tracking-widest-plus uppercase text-primary mb-4">Services</h4>
+            <h4 className="text-xs tracking-widest-plus uppercase text-brand-gold mb-4">Services</h4>
             <ul className="space-y-2.5">
               {serviceCategories.map((s) => (
                 <li key={s.slug}>
                   <Link
                     to={`/services/${s.slug}`}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    className="text-sm text-white/70 hover:text-brand-gold transition-colors"
                   >
                     {s.shortName}
                   </Link>
@@ -36,43 +36,43 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-xs tracking-widest-plus uppercase text-primary mb-4">Explore</h4>
+            <h4 className="text-xs tracking-widest-plus uppercase text-brand-gold mb-4">Explore</h4>
             <ul className="space-y-2.5">
-              <li><Link to="/portfolio" className="text-sm text-muted-foreground hover:text-primary transition-colors">Portfolio</Link></li>
-              <li><Link to="/discover" className="text-sm text-muted-foreground hover:text-primary transition-colors">Project Discovery</Link></li>
-              <li><Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors">About O Studio</Link></li>
-              <li><Link to="/journal" className="text-sm text-muted-foreground hover:text-primary transition-colors">Journal</Link></li>
-              <li><Link to="/faq" className="text-sm text-muted-foreground hover:text-primary transition-colors">FAQ</Link></li>
-              <li><Link to="/careers" className="text-sm text-muted-foreground hover:text-primary transition-colors">Careers</Link></li>
+              <li><Link to="/portfolio" className="text-sm text-white/70 hover:text-brand-gold transition-colors">Portfolio</Link></li>
+              <li><Link to="/discover" className="text-sm text-white/70 hover:text-brand-gold transition-colors">Project Discovery</Link></li>
+              <li><Link to="/about" className="text-sm text-white/70 hover:text-brand-gold transition-colors">About O Studio</Link></li>
+              <li><Link to="/journal" className="text-sm text-white/70 hover:text-brand-gold transition-colors">Journal</Link></li>
+              <li><Link to="/faq" className="text-sm text-white/70 hover:text-brand-gold transition-colors">FAQ</Link></li>
+              <li><Link to="/careers" className="text-sm text-white/70 hover:text-brand-gold transition-colors">Careers</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-xs tracking-widest-plus uppercase text-primary mb-4">Get in Touch</h4>
+            <h4 className="text-xs tracking-widest-plus uppercase text-brand-gold mb-4">Get in Touch</h4>
             <ul className="space-y-3">
-              <li className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Mail size={15} className="text-primary shrink-0" /> info@ostudioinnovations.com
+              <li className="flex items-center gap-2 text-sm text-white/70">
+                <Mail size={15} className="text-brand-gold shrink-0" /> info@ostudioinnovations.com
               </li>
-              <li className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Phone size={15} className="text-primary shrink-0" /> +234 704 225 1787
+              <li className="flex items-center gap-2 text-sm text-white/70">
+                <Phone size={15} className="text-brand-gold shrink-0" /> +234 704 225 1787
               </li>
-              <li className="flex items-center gap-2 text-sm text-muted-foreground">
-                <FaMapMarkerAlt size={15} className="text-primary shrink-0" /> 174 Ikorodu Rd, Elediye Bus Stop, Onipanu, Lagos 102216, Lagos
+              <li className="flex items-center gap-2 text-sm text-white/70">
+                <FaMapMarkerAlt size={15} className="text-brand-gold shrink-0" /> 174 Ikorodu Rd, Elediye Bus Stop, Onipanu, Lagos 102216, Lagos
               </li>
               <li className="flex items-center gap-3 pt-1">
-                <a href="https://www.youtube.com/@ostudioinnovations" aria-label="YouTube" className="text-muted-foreground hover:text-primary transition-colors">
+                <a href="https://www.youtube.com/@ostudioinnovations" aria-label="YouTube" className="text-white/70 hover:text-brand-gold transition-colors">
                   <Youtube size={18} />
                 </a>
-                <a href="https://www.tiktok.com/@ostudioinnovations?_r=1&_t=ZN-98zmnqYiFks" aria-label="TikTok" className="text-muted-foreground hover:text-primary transition-colors">
+                <a href="https://www.tiktok.com/@ostudioinnovations?_r=1&_t=ZN-98zmnqYiFks" aria-label="TikTok" className="text-white/70 hover:text-brand-gold transition-colors">
                   <FaTiktok size={18} />
                 </a>
-                <a href="#" aria-label="Instagram" className="text-muted-foreground hover:text-primary transition-colors">
+                <a href="#" aria-label="Instagram" className="text-white/70 hover:text-brand-gold transition-colors">
                   <Instagram size={18} />
                 </a>
-                <a href="#" aria-label="Facebook" className="text-muted-foreground hover:text-primary transition-colors">
+                <a href="#" aria-label="Facebook" className="text-white/70 hover:text-brand-gold transition-colors">
                   <Facebook size={18} />
                 </a>
-                <a href="#" aria-label="WhatsApp" className="text-muted-foreground hover:text-primary transition-colors">
+                <a href="https://wa.me/2347042251787" aria-label="WhatsApp" className="text-white/70 hover:text-brand-gold transition-colors">
                   <FaWhatsapp size={18} />
                 </a>
               </li>
@@ -82,7 +82,7 @@ export function Footer() {
 
         <div className="divider-line my-10" />
 
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/60">
           <p>&copy; {new Date().getFullYear()} O Studio Innovations. All rights reserved.</p>
           <p className="tracking-widest-plus uppercase">Where Creativity Meets Innovation</p>
         </div>

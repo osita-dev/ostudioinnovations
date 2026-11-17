@@ -86,7 +86,17 @@ const Discover = () => {
                           </Button>
                         )}
                         <Button asChild variant="ghost" className="rounded-full">
-                          <Link to={`/start-project?service=${service.slug}`}>Start This Project</Link>
+                          <Link
+                            to={
+                              service.slug === "studio-rental"
+                                ? "/studio-rental"
+                                : `/start-project?service=${service.slug}`
+                            }
+                          >
+                            {service.slug === "studio-rental"
+                              ? "Book the Studio"
+                              : "Start This Project"}
+                          </Link>
                         </Button>
                       </div>
                     </div>
