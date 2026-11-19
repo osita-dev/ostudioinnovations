@@ -13,6 +13,7 @@ import { submitCreatorApplication } from "@/lib/applications";
 import { CareersHero } from "@/components/careers/CareersHero";
 import { StepTransition } from "@/components/start-project/StepTransition";
 import { BackToStory } from "@/components/shared/BackToStory";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import {
   formDescription,
   creativeInterests,
@@ -195,6 +196,11 @@ function CharCount({ value, min }: { value: string; min: number }) {
 }
 
 const Careers = () => {
+  usePageMeta(
+    "Join the crew — Careers | O Studio Innovations",
+    "Creativity. Storytelling. Collaboration. Apply to join O Studio Innovations as a Content Creator / Editor."
+  );
+
   const [step, setStep] = useState(0);
   // Slide direction for the step transition: 1 forward, -1 back.
   const [direction, setDirection] = useState<1 | -1>(1);

@@ -31,7 +31,7 @@ export function FilmProductionVisual({ service }: VisualProps) {
   return (
     <div aria-hidden className="absolute inset-0 overflow-hidden">
       {staticMode ? (
-        <img src={asset.poster} alt="" className="h-full w-full object-cover" />
+        <img src={asset.poster} alt="" loading="lazy" className="h-full w-full object-cover" />
       ) : (
         <ReelVideo poster={asset.poster} alt="" className="h-full w-full" />
       )}

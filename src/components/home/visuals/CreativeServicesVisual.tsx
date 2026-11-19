@@ -44,7 +44,7 @@ export function CreativeServicesVisual({ service }: VisualProps) {
                   }
             }
           >
-            <img src={srcAt(i)} alt="" className="h-full w-full object-cover" />
+            <img src={srcAt(i)} alt="" loading="lazy" className="h-full w-full object-cover" />
           </motion.div>
         </TiltCard>
       ))}

@@ -122,7 +122,7 @@ export function MenuOverlay({ open, onOpenChange }: MenuOverlayProps) {
                   className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-gradient-to-br from-foreground/10 via-foreground/5 to-transparent"
                 >
                   {preview.poster ? (
-                    <img src={preview.poster} alt="" className="h-full w-full object-cover" />
+                    <img src={preview.poster} alt="" loading="lazy" className="h-full w-full object-cover" />
                   ) : (
                     <div className="flex h-full items-center justify-center">
                       <span className="text-6xl font-semibold text-foreground/20">{preview.n}</span>

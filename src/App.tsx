@@ -1,3 +1,10 @@
+/**
+ * App — the route table. Home stays eager (first paint); every other page
+ * loads through React.lazy with SiteLayout's Suspense fallback, so the
+ * initial bundle only carries the hero story. The dev-only /_kit gallery
+ * is gone as of Stage 13.
+ */
+import { lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,27 +14,23 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { CinemaProvider } from "@/cinema/core/CinemaProvider";
 import Home from "./pages/Home";
-import Services from "./pages/Services";
-import ServiceDetail from "./pages/ServiceDetail";
-import Portfolio from "./pages/Portfolio";
-import ProjectDetail from "./pages/ProjectDetail";
-import Discover from "./pages/Discover";
-import StartProject from "./pages/StartProject";
-import StudioRental from "./pages/StudioRental";
-import Careers from "./pages/Careers";
-import FAQ from "./pages/FAQ";
-import About from "./pages/About";
-import Journal from "./pages/Journal";
-import JournalPost from "./pages/JournalPost";
-import Feedback from "./pages/Feedback";
-import NotFound from "./pages/NotFound";
-import Kit from "./pages/Kit";
+
+const Services = lazy(() => import("./pages/Services"));
+const ServiceDetail = lazy(() => import("./pages/ServiceDetail"));
+const Portfolio = lazy(() => import("./pages/Portfolio"));
+const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
+const Discover = lazy(() => import("./pages/Discover"));
+const StartProject = lazy(() => import("./pages/StartProject"));
+const StudioRental = lazy(() => import("./pages/StudioRental"));
+const Careers = lazy(() => import("./pages/Careers"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+const About = lazy(() => import("./pages/About"));
+const Journal = lazy(() => import("./pages/Journal"));
+const JournalPost = lazy(() => import("./pages/JournalPost"));
+const Feedback = lazy(() => import("./pages/Feedback"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
-
-// Dev-only: /_kit showcases the Stage 4 primitives. DEV is false in
-// production builds, so the route never ships (remove both in Stage 13).
-const DevKit = import.meta.env.DEV ? Kit : null;
 
 const App = () => (
   <CinemaProvider>
@@ -53,8 +56,6 @@ const App = () => (
               <Route path="/journal/:slug" element={<JournalPost />} />
               {/* Link-only page (noindex, not in the nav) — launch feedback */}
               <Route path="/feedback" element={<Feedback />} />
-              {/* Dev-only primitives gallery — removed in Stage 13 */}
-              {DevKit && <Route path="/_kit" element={<DevKit />} />}
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Route>

@@ -13,11 +13,17 @@ import { ViewToggle, type ProjectView } from "@/components/portfolio/ViewToggle"
 import { WorkIndex } from "@/components/home/WorkIndex";
 import { portfolioProjects } from "@/data/portfolio";
 import { CreditsCTA } from "@/components/home/CreditsCTA";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 const Portfolio = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [view, setView] = useState<ProjectView>("grid");
   const category = searchParams.get("category") ?? "all";
+
+  usePageMeta(
+    "Now showing — Portfolio | O Studio Innovations",
+    "Real projects, by category — the O Studio Innovations portfolio of film, content, events and technology work."
+  );
 
   const filteredProjects = useMemo(() => {
     if (category === "all") return portfolioProjects;

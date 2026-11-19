@@ -125,7 +125,7 @@ export function PromiseWords({ lines }: PromiseWordsProps) {
     return (
       <section className="relative overflow-hidden">
         <div aria-hidden className="absolute inset-0">
-          <img src={lines[0].media.poster} alt="" className="h-full w-full object-cover" />
+          <img src={lines[0].media.poster} alt="" loading="lazy" className="h-full w-full object-cover" />
           <div className="absolute inset-0 bg-background/80" />
         </div>
         <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center gap-6 px-6 py-28 text-center">
@@ -158,7 +158,7 @@ export function PromiseWords({ lines }: PromiseWordsProps) {
           className="absolute inset-0"
           style={{ opacity: i === 0 ? 1 : 0 }}
         >
-          <img src={line.media.poster} alt="" className="h-full w-full object-cover" />
+          <img src={line.media.poster} alt="" loading="lazy" className="h-full w-full object-cover" />
         </div>
       ))}
       <div aria-hidden className="absolute inset-0 bg-background/80" />

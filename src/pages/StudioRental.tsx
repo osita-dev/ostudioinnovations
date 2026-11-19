@@ -22,6 +22,7 @@ import { submitStudioBooking } from "@/lib/bookings";
 import { RoomHero } from "@/components/studio-rental/RoomHero";
 import { RoomPicker } from "@/components/studio-rental/RoomPicker";
 import { SuccessScene } from "@/components/start-project/SuccessScene";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 // ============================================================
 // STUDIO RENTAL — booking request
@@ -161,6 +162,11 @@ const studioOptions = [
 const fieldLabel = "text-xs tracking-widest-plus uppercase text-primary mb-2";
 
 const StudioRental = () => {
+  usePageMeta(
+    "Book a studio session — Studio Rental | O Studio Innovations",
+    "Studio Rental is the space. A booking is your request to hold a slot — tell us the space, the date, and how you'll use it."
+  );
+
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);

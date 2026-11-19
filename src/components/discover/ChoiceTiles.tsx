@@ -163,6 +163,7 @@ export function ChoiceTiles({
                               <img
                                 src={examplePoster.poster}
                                 alt={examplePoster.alt}
+                                loading="lazy"
                                 className="h-full w-full object-cover transition-transform duration-500 group-hover/project:scale-105"
                               />
                             </span>

@@ -25,6 +25,7 @@ import { FormFrame } from "@/components/start-project/FormFrame";
 import { StepProgress } from "@/components/start-project/StepProgress";
 import { StepTransition } from "@/components/start-project/StepTransition";
 import { SuccessScene } from "@/components/start-project/SuccessScene";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 // Services where date/location/guest-count questions are relevant
 const EVENT_LIKE: CategorySlug[] = ["media-events", "content-entertainment"];
@@ -59,6 +60,11 @@ type FormValues = z.infer<typeof formSchema>;
 const steps = ["Service", "Project Details", "Contact", "Review"] as const;
 
 const StartProject = () => {
+  usePageMeta(
+    "Start a Project | O Studio Innovations",
+    "Tell us about your project — a few quick steps, and the O Studio team replies with a plan."
+  );
+
   const [searchParams] = useSearchParams();
   const preselected = searchParams.get("service") ?? "";
   const projectParam = searchParams.get("project");

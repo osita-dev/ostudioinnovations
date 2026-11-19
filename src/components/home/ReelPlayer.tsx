@@ -14,11 +14,13 @@ type ReelPlayerProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   src: string;
+  /** First frame shown while the reel buffers. */
+  poster: string;
   title: string;
   description: string;
 };
 
-export function ReelPlayer({ open, onOpenChange, src, title, description }: ReelPlayerProps) {
+export function ReelPlayer({ open, onOpenChange, src, poster, title, description }: ReelPlayerProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="fixed inset-0 flex translate-x-0 translate-y-0 items-center justify-center border-0 bg-background/95 p-0 backdrop-blur-xl max-w-none sm:rounded-none data-[state=open]:!slide-in-from-left-[0px] data-[state=open]:!slide-in-from-top-[0px] data-[state=closed]:!slide-out-to-left-[0px] data-[state=closed]:!slide-out-to-top-[0px]">
@@ -27,6 +29,8 @@ export function ReelPlayer({ open, onOpenChange, src, title, description }: Reel
         <video
           className="max-h-[85vh] max-w-[92vw] rounded-xl"
           src={src}
+          poster={poster}
+          preload="metadata"
           controls
           autoPlay
           muted

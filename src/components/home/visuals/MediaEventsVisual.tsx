@@ -43,7 +43,7 @@ export function MediaEventsVisual({ service }: VisualProps) {
               ease: easings.smooth,
             }}
           >
-            <img src={srcAt(i)} alt="" className="h-full w-full object-cover" />
+            <img src={srcAt(i)} alt="" loading="lazy" className="h-full w-full object-cover" />
           </motion.div>
         );
       })}

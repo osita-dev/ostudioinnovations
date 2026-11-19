@@ -6,9 +6,15 @@ import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Clapperboard } from "@/components/notfound/Clapperboard";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 const NotFound = () => {
   const location = useLocation();
+
+  usePageMeta(
+    "Page not found | O Studio Innovations",
+    "This page isn't in the film — head back to the start of O Studio Innovations."
+  );
 
   useEffect(() => {
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);

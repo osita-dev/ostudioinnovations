@@ -49,6 +49,7 @@ export function TrustScene() {
             <motion.img
               src={media.studio.poster}
               alt={media.studio.alt}
+              loading="lazy"
               className="aspect-video w-full object-cover"
               animate={reducedMotion ? undefined : { scale: [1, 1.08, 1] }}
               transition={
@@ -77,6 +78,7 @@ export function TrustScene() {
                 <img
                   src={still.poster}
                   alt={still.alt}
+                  loading="lazy"
                   className="aspect-[3/4] w-full rounded-xl border border-border object-cover"
                 />
               </Reveal>

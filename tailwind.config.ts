@@ -15,12 +15,9 @@ export default {
     },
     extend: {
       colors: {
-        // O Studio brand palette (hex → HSL)
+        // O Studio brand palette (hex → HSL) — dark-film tokens only;
+        // the retired light tokens (milk/champagne/beige/light gray) are gone.
         brand: {
-          milk: "hsl(80 100% 98.8%)",        // #FDFFF9 Signature Milk White
-          champagne: "hsl(40 47.4% 92.5%)",  // #F5EFE3 Warm Champagne
-          beige: "hsl(37.5 42.1% 85.1%)",    // #E9DDC9 Soft Beige
-          gray: "hsl(30 4% 96%)",            // #F5F4F4 Light Gray
           gold: "hsl(42.6 100% 42.5%)",      // #D99A00 Signature Gold (accent only)
           antique: "hsl(42.7 88.7% 38.2%)",  // #B8860B Antique Gold (accent only)
           charcoal: "hsl(30 5.7% 13.7%)",    // #252321 Soft Charcoal

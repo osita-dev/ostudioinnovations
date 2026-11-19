@@ -7,9 +7,15 @@ import { CreditsCTA } from "@/components/home/CreditsCTA";
 import { ChoiceTiles } from "@/components/discover/ChoiceTiles";
 import { DiscoverHero } from "@/components/discover/DiscoverHero";
 import { useDiscovery } from "@/hooks/useDiscovery";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 const Discover = () => {
   const discovery = useDiscovery();
+
+  usePageMeta(
+    "Project Discovery | O Studio Innovations",
+    "You don't need to know the exact service name — just tell us the outcome you want, and we'll point you to the right team."
+  );
 
   return (
     <div>

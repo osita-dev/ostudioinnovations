@@ -12,10 +12,17 @@ import { RelatedWork } from "@/components/services/detail/RelatedWork";
 import { DetailCTA } from "@/components/services/detail/DetailCTA";
 import { getServiceBySlug } from "@/data/services";
 import { portfolioProjects } from "@/data/portfolio";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 const ServiceDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const service = getServiceBySlug(slug ?? "");
+
+  // Before the redirect so the hook order stays fixed across renders.
+  usePageMeta(
+    service ? `${service.name} | O Studio Innovations` : "Services | O Studio Innovations",
+    service?.tagline ?? "Six services, one studio at O Studio Innovations."
+  );
 
   if (!service) return <Navigate to="/services" replace />;
 

@@ -62,6 +62,7 @@ export function RoomPicker({ options, value, onChange, error }: RoomPickerProps)
                   <img
                     src={photo.poster}
                     alt={photo.alt}
+                    loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <span

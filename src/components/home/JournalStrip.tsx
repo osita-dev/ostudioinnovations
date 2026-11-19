@@ -28,6 +28,7 @@ export function JournalStrip() {
                 <img
                   src={post.coverImage}
                   alt=""
+                  loading="lazy"
                   className="h-16 w-16 shrink-0 rounded-lg border border-border object-cover"
                 />
                 <span className="min-w-0 text-sm leading-snug text-foreground/60 transition-colors group-hover:text-foreground">

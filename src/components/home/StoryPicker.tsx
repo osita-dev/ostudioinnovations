@@ -96,6 +96,7 @@ export function StoryPicker() {
                 <img
                   src={project.coverImage}
                   alt={project.title}
+                  loading="lazy"
                   className="aspect-video w-full object-cover"
                 />
                 <figcaption className="flex flex-wrap items-baseline justify-between gap-2 px-4 py-3 text-sm">

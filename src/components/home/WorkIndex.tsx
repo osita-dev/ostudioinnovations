@@ -118,6 +118,7 @@ export function WorkIndex({ projects }: WorkIndexProps) {
                 <video
                   src={activeAsset.video}
                   poster={activeAsset.poster}
+                  preload="metadata"
                   autoPlay
                   muted
                   loop
@@ -166,7 +167,7 @@ export function WorkIndex({ projects }: WorkIndexProps) {
                       hovered !== null && hovered !== i && "opacity-30"
                     )}
                   >
-                    <span className="w-8 shrink-0 text-xs tabular-nums text-foreground/40">
+                    <span className="w-8 shrink-0 text-xs tabular-nums text-foreground/60">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <div className="min-w-0 flex-1">
@@ -191,6 +192,7 @@ export function WorkIndex({ projects }: WorkIndexProps) {
                       <img
                         src={asset.poster}
                         alt=""
+                        loading="lazy"
                         className="h-16 w-24 shrink-0 rounded-lg object-cover"
                       />
                     )}

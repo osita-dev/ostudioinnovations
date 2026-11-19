@@ -36,6 +36,7 @@ export function FormFrame({ service, project, children }: FormFrameProps) {
                 key={asset.poster}
                 src={asset.poster}
                 alt={asset.alt}
+                loading="lazy"
                 className="absolute inset-0 h-full w-full object-cover"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

@@ -7,6 +7,7 @@ import { journalPosts } from "@/data/journal";
 import { FeaturedPost } from "@/components/journal/FeaturedPost";
 import { PostGrid } from "@/components/journal/PostGrid";
 import { BackToStory } from "@/components/shared/BackToStory";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 const categoryLabels: Record<string, string> = {
   "case-study": "Case Study",
@@ -17,6 +18,11 @@ const categoryLabels: Record<string, string> = {
 
 const Journal = () => {
   const [featured, ...rest] = journalPosts;
+
+  usePageMeta(
+    "Journal — Stories, process, and perspective | O Studio Innovations",
+    "Project breakdowns, behind-the-scenes notes, and insights from across O Studio."
+  );
 
   return (
     <div>

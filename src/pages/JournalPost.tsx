@@ -8,6 +8,7 @@ import { getPostBySlug, journalPosts } from "@/data/journal";
 import { PostHero } from "@/components/journal/PostHero";
 import { NextStory } from "@/components/journal/NextStory";
 import { BackToStory } from "@/components/shared/BackToStory";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 const categoryLabels: Record<string, string> = {
   "case-study": "Case Study",
@@ -19,6 +20,13 @@ const categoryLabels: Record<string, string> = {
 const JournalPost = () => {
   const { slug } = useParams<{ slug: string }>();
   const post = getPostBySlug(slug ?? "");
+
+  // Before the redirect so the hook order stays fixed across renders.
+  usePageMeta(
+    post ? `${post.title} — Journal | O Studio Innovations` : "Journal | O Studio Innovations",
+    post?.excerpt ??
+      "Stories, process and perspective from O Studio Innovations."
+  );
 
   if (!post) return <Navigate to="/journal" replace />;
 

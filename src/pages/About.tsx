@@ -12,6 +12,7 @@ import { CreditsCTA } from "@/components/home/CreditsCTA";
 import { BackToStory } from "@/components/shared/BackToStory";
 import { serviceCategories } from "@/data/services";
 import { media } from "@/data/media";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 // Promise beats for About: same three verbs as Home, own stills.
 const promiseLines: PromiseLine[] = [
@@ -27,16 +28,23 @@ const stats: StatItem[] = [
   { value: "100%", label: "Real, delivered work" },
 ];
 
-const About = () => (
-  <div>
-    <AboutHero />
-    <StoryParagraphs />
-    <PromiseWords lines={promiseLines} />
-    <CapabilityThread />
-    <Stats items={stats} />
-    <CreditsCTA />
-    <BackToStory />
-  </div>
-);
+const About = () => {
+  usePageMeta(
+    "About — We create. We build. We document. | O Studio Innovations",
+    "O Studio Innovations sits at the intersection of creative production and technology."
+  );
+
+  return (
+    <div>
+      <AboutHero />
+      <StoryParagraphs />
+      <PromiseWords lines={promiseLines} />
+      <CapabilityThread />
+      <Stats items={stats} />
+      <CreditsCTA />
+      <BackToStory />
+    </div>
+  );
+};
 
 export default About;

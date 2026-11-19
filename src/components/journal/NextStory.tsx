@@ -28,6 +28,7 @@ export function NextStory({ post }: NextStoryProps) {
             <img
               src={post.coverImage}
               alt=""
+              loading="lazy"
               className="h-24 w-32 shrink-0 rounded-lg object-cover sm:h-28 sm:w-44"
             />
             <span className="min-w-0">

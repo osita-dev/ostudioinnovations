@@ -10,8 +10,14 @@ import { ServicePanel } from "@/components/services/ServicePanel";
 import { SERVICE_SCENE_ORDER } from "@/components/home/sceneOrder";
 import { serviceCategories } from "@/data/services";
 import { CreditsCTA } from "@/components/home/CreditsCTA";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 const Services = () => {
+  usePageMeta(
+    "What we do — Services | O Studio Innovations",
+    "Six services, one studio: Media & Events, Film & Production, Content & Entertainment, Technology, Creative Services, and Studio Rental."
+  );
+
   return (
     <div>
       <ServicesHero />

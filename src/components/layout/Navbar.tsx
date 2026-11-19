@@ -1,15 +1,13 @@
 /**
  * Navbar — the lobby rail: transparent at the top of the page, dark glass
- * after 12px of scroll, hiding on the way down and returning on the way up.
+ * after 12px of scroll, and static while scrolling — it never flips away.
  * Four primary doors, the full-screen Menu and the sound toggle; a route
  * change closes the menu during render (adjust-state, no effect).
  */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Menu, Volume2, VolumeX } from "lucide-react";
-import { motion } from "framer-motion";
 import { useCinema } from "@/cinema/core/CinemaProvider";
-import { durations, easings } from "@/cinema/motion/presets";
 import { MenuOverlay } from "@/components/layout/MenuOverlay";
 import { cn } from "@/lib/utils";
 
@@ -23,8 +21,6 @@ const doors = [
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
-  const lastYRef = useRef(0);
   const { soundOn, toggleSound } = useCinema();
   const location = useLocation();
 
@@ -36,31 +32,17 @@ export function Navbar() {
     if (menuOpen) setMenuOpen(false);
   }
 
-  // Glass after 12px; hide while scrolling down, show on the way up.
+  // Glass after 12px. The rail itself stays put — it never slides away.
   useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 12);
-      if (y > lastYRef.current && y > 80) setHidden(true);
-      else if (y < lastYRef.current) setHidden(false);
-      lastYRef.current = y;
-    };
+    const onScroll = () => setScrolled(window.scrollY > 12);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // The menu button must stay reachable: never hide while it is open.
-  const slide = hidden && !menuOpen;
-
   return (
     <>
-      <motion.header
-        className="fixed inset-x-0 top-0 z-50"
-        animate={{ y: slide ? "-100%" : "0%" }}
-        transition={{ duration: durations.fast, ease: easings.snap }}
-        onFocus={() => setHidden(false)}
-      >
+      <header className="fixed inset-x-0 top-0 z-50">
         <div
           className={cn(
             "border-b transition-colors",
@@ -138,7 +120,7 @@ export function Navbar() {
             </div>
           </div>
         </div>
-      </motion.header>
+      </header>
 
       <MenuOverlay open={menuOpen} onOpenChange={setMenuOpen} />
     </>

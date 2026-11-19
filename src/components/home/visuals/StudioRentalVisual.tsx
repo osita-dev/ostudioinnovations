@@ -24,6 +24,7 @@ export function StudioRentalVisual({ service }: VisualProps) {
       <motion.img
         src={asset.poster}
         alt=""
+        loading="lazy"
         className="h-full w-full object-cover"
         style={{ scale: 1.12 }} // overscan so the ±2% dolly never shows an edge
         animate={staticMode ? undefined : { x: ["-2%", "2%"] }}

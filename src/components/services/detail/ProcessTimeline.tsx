@@ -200,7 +200,7 @@ export function ProcessTimeline({ service }: ProcessTimelineProps) {
         <div className="relative hidden lg:block">
           {media && (
             <div aria-hidden className="absolute inset-0">
-              <img src={media.poster} alt="" className="h-full w-full object-cover" />
+              <img src={media.poster} alt="" loading="lazy" className="h-full w-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-r from-background via-background/30 to-transparent" />
             </div>
           )}

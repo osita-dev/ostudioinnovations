@@ -21,7 +21,9 @@ import {
   photoConsentOptions,
   contactOptions,
   feedbackSections,
+  feedbackIntro,
 } from "@/data/feedback";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 // ============================================================
 // LAUNCH FEEDBACK — /feedback
@@ -219,6 +221,11 @@ function QuestionLabel({
 }
 
 const Feedback = () => {
+  // Link-only launch page — kept out of search indexes on purpose.
+  usePageMeta("Launch Feedback | O Studio Innovations", feedbackIntro, {
+    noindex: true,
+  });
+
   const [searchParams] = useSearchParams();
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);

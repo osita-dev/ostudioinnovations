@@ -5,8 +5,14 @@
  */
 import { FaqAccordion } from "@/components/faq/FaqAccordion";
 import { BackToStory } from "@/components/shared/BackToStory";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 const FAQ = () => {
+  usePageMeta(
+    "FAQ — Answers before you have to ask | O Studio Innovations",
+    "The most common questions about working with O Studio."
+  );
+
   return (
     <div>
       <section className="bg-hero-gradient py-16 sm:py-20">

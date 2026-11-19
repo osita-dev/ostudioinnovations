@@ -142,6 +142,7 @@ export function HeroReel() {
           open={playerOpen}
           onOpenChange={setPlayerOpen}
           src={reelVideo}
+          poster={media.reel.poster}
           title="Watch the reel"
           description={media.reel.alt}
         />

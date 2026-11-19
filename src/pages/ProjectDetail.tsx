@@ -13,10 +13,20 @@ import { EndCredits } from "@/components/project/EndCredits";
 import { NextProject } from "@/components/project/NextProject";
 import { getProjectBySlug, portfolioProjects } from "@/data/portfolio";
 import { getServiceBySlug } from "@/data/services";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 const ProjectDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const project = getProjectBySlug(slug ?? "");
+
+  // Before the redirect so the hook order stays fixed across renders.
+  usePageMeta(
+    project
+      ? `${project.title} — Portfolio | O Studio Innovations`
+      : "Portfolio | O Studio Innovations",
+    project?.description ??
+      "Real projects from O Studio Innovations — film, content, events and technology work."
+  );
 
   if (!project) return <Navigate to="/portfolio" replace />;
 
