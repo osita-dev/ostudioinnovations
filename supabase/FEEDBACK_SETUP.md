@@ -62,8 +62,8 @@ https://yourdomain.com/feedback?name=Ada&phone=%2B2348012345678&id=12
 - It injects `<meta name="robots" content="noindex, nofollow">` while
   open, so search engines won't list it.
 - No tracking or analytics are added anywhere.
-- Photo consent is **required** and nothing is pre-selected; consent
-  values are stored exactly as chosen (including the "keep private" option).
+- Photo consent is **required** and nothing is pre-selected; the stored
+  value is simply `Yes` or `No`.
 
 ## 6. Spam protection
 

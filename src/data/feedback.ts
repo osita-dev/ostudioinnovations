@@ -47,12 +47,7 @@ export const serviceOptions = [
 export const wouldUseOptions = ["Yes", "Maybe", "Not yet"];
 
 /** Photo consent — required, and nothing is ever pre-selected. */
-export const photoConsentOptions = [
-  "Yes, on our website and social media",
-  "Yes, on our website only",
-  "Yes, on social media only",
-  "No, please keep my photos private (you'll still receive your own copies when they're ready)",
-];
+export const photoConsentOptions = ["Yes", "No"];
 
 /** Last section — optional contact permission. */
 export const contactOptions = ["Yes", "No"];

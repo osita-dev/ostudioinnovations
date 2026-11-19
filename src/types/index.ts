@@ -12,6 +12,14 @@ export type CategorySlug =
   | "creative-services"
   | "studio-rental";
 
+// Media registry entry — poster always present, video added once the
+// compressed file sits in public/media/ (registered in src/data/media.ts).
+export interface MediaAsset {
+  poster: string;
+  video?: string;
+  alt: string;
+}
+
 export interface ServiceCategory {
   id: string;
   slug: CategorySlug;
@@ -27,6 +35,8 @@ export interface ServiceCategory {
   startingPrice?: string; // display only — placeholder until real pricing supplied by O Studio
   relatedProjectCategories: string[]; // portfolio filter slugs this service maps to
   icon: string; // lucide icon name
+  /** Optional override of this service's entry in src/data/media.ts. */
+  media?: MediaAsset;
 }
 
 export interface PortfolioProject {
@@ -48,6 +58,8 @@ export interface PortfolioProject {
     author: string;
     role?: string;
   };
+  /** Optional media override; getProjectMedia() falls back to coverImage. */
+  media?: MediaAsset;
 }
 
 export interface FAQItem {

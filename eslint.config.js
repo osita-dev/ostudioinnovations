@@ -20,4 +20,15 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  // --- Stage 1 baseline ---------------------------------------------
+  // Pre-existing errors in files the stage rules forbid editing.
+  // Remove each override when its file is legitimately rebuilt.
+  {
+    // shadcn stock code — frozen by AGENTS.md ("never touch components/ui")
+    files: ['src/components/ui/**/*.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+      'react-hooks/purity': 'off',
+    },
+  },
 ])

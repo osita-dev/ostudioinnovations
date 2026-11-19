@@ -10,6 +10,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { submitCreatorApplication } from "@/lib/applications";
+import { CareersHero } from "@/components/careers/CareersHero";
+import { StepTransition } from "@/components/start-project/StepTransition";
+import { BackToStory } from "@/components/shared/BackToStory";
 import {
   formDescription,
   creativeInterests,
@@ -193,6 +196,8 @@ function CharCount({ value, min }: { value: string; min: number }) {
 
 const Careers = () => {
   const [step, setStep] = useState(0);
+  // Slide direction for the step transition: 1 forward, -1 back.
+  const [direction, setDirection] = useState<1 | -1>(1);
   const [submitted, setSubmitted] = useState(false);
   // Kept so the success screen can address the applicant by name
   // after the form has been reset.
@@ -252,9 +257,15 @@ const Careers = () => {
 
   const goNext = async () => {
     const valid = await trigger(stepFields[step]);
-    if (valid) setStep((s) => Math.min(s + 1, applicationSections.length - 1));
+    if (valid) {
+      setDirection(1);
+      setStep((s) => Math.min(s + 1, applicationSections.length - 1));
+    }
   };
-  const goBack = () => setStep((s) => Math.max(s - 1, 0));
+  const goBack = () => {
+    setDirection(-1);
+    setStep((s) => Math.max(s - 1, 0));
+  };
 
   const onSubmit = async (data: FormValues) => {
     const application = {
@@ -358,19 +369,7 @@ const Careers = () => {
   return (
     <div>
       {/* HERO */}
-      <section className="bg-hero-gradient py-28">
-        <div className="container text-center">
-          <p className="text-xs tracking-widest-plus uppercase text-primary mb-6">
-            O Studio Innovations
-          </p>
-          <h1 className="font-serif-display text-4xl sm:text-6xl leading-tight max-w-3xl mx-auto">
-            Content Creator / Editor Application Form
-          </h1>
-          <p className="mt-6 font-serif-display text-xl sm:text-2xl">
-            <span className="text-gold-gradient">Creativity. Storytelling. Collaboration.</span>
-          </p>
-        </div>
-      </section>
+      <CareersHero />
 
       {/* FORM DESCRIPTION */}
       <section className="border-b border-border">
@@ -429,6 +428,7 @@ const Careers = () => {
             onSubmit={handleSubmit(onSubmit)}
             className="bg-card border border-border rounded-2xl p-8 sm:p-10 shadow-card"
           >
+            <StepTransition step={step} direction={direction}>
             {/* SECTION 1 — PERSONAL INFORMATION (Q1–Q4) */}
             {step === 0 && (
               <div className="space-y-6">
@@ -889,6 +889,7 @@ const Careers = () => {
               </div>
             )}
 
+            </StepTransition>
             {/* SEND ERROR — form data is kept, applicant can retry */}
             {sendError && (
               <div
@@ -922,6 +923,7 @@ const Careers = () => {
           </form>
         </div>
       </section>
+      <BackToStory />
     </div>
   );
 };

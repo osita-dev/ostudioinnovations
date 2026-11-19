@@ -3,7 +3,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useSearchParams } from "react-router-dom";
-import { Check, ArrowRight, ArrowLeft, PartyPopper } from "lucide-react";
+import { Check, ArrowRight, ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,19 +11,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { submitFeedback } from "@/lib/feedback";
+import { FeedbackHero } from "@/components/feedback/FeedbackHero";
+import { FeedbackSuccess } from "@/components/feedback/FeedbackSuccess";
 import {
-  feedbackIntro,
   privacyNote,
-  thankYouMessage,
   howHeardOptions,
   serviceOptions,
   wouldUseOptions,
   photoConsentOptions,
   contactOptions,
   feedbackSections,
-  contactWhatsApp,
-  contactWhatsAppUrl,
-  contactEmail,
 } from "@/data/feedback";
 
 // ============================================================
@@ -91,7 +88,7 @@ const formSchema = z
       .trim()
       .max(300, "That's plenty — 300 characters is the cap.")
       .optional(),
-    photoConsent: z.string().min(1, "Please choose one — we won't assume anything"),
+    photoConsent: z.string().min(1, "Please choose one"),
     contactConsent: z.string().optional(),
     name: z.string().trim().max(120, "That's a little long — 120 characters is plenty.").optional(),
     phone: z.string().trim().max(40, "That's a little long — 40 characters is plenty.").optional(),
@@ -364,20 +361,7 @@ const Feedback = () => {
 
   // --- Success screen (spec copy, verbatim) --------------------
   if (submitted) {
-    return (
-      <div className="container py-24 sm:py-28 max-w-xl text-center">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/15">
-          <PartyPopper className="text-primary" size={28} />
-        </div>
-        <h1 className="font-serif-display text-3xl sm:text-4xl leading-snug">{thankYouMessage}</h1>
-
-        <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-          <Button asChild className="rounded-full px-8 h-11 sm:h-9">
-            <a href="/">Return Home</a>
-          </Button>
-        </div>
-      </div>
-    );
+    return <FeedbackSuccess />;
   }
 
   const section = feedbackSections[step];
@@ -385,19 +369,7 @@ const Feedback = () => {
   return (
     <div>
       {/* HERO — intro copy is the first thing on the page */}
-      <section className="bg-hero-gradient py-20 sm:py-28">
-        <div className="container text-center">
-          <p className="text-xs tracking-widest-plus uppercase text-primary mb-6">
-            O Studio Innovations
-          </p>
-          <h1 className="font-serif-display text-4xl sm:text-6xl leading-tight max-w-3xl mx-auto">
-            Launch Feedback
-          </h1>
-          <p className="mt-6 max-w-2xl mx-auto text-muted-foreground leading-relaxed">
-            {feedbackIntro}
-          </p>
-        </div>
-      </section>
+      <FeedbackHero />
 
       {/* FORM */}
       <section className="py-14 sm:py-20">
@@ -721,22 +693,6 @@ const Feedback = () => {
                   {errors.photoConsent && (
                     <p className="text-xs text-destructive">{errors.photoConsent.message}</p>
                   )}
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    You can change your mind anytime by messaging us at{" "}
-                    <a
-                      href={contactWhatsAppUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="underline text-foreground/80"
-                    >
-                      {contactWhatsApp}
-                    </a>{" "}
-                    or{" "}
-                    <a href={`mailto:${contactEmail}`} className="underline text-foreground/80">
-                      {contactEmail}
-                    </a>
-                    , and we'll remove your photos.
-                  </p>
                 </div>
 
                 {/* Future contact — optional */}

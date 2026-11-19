@@ -1,6 +1,11 @@
+/**
+ * NotFound — the clapperboard 404: slate snaps shut once, then the cut line
+ * and a white button back to the start. Keeps the console.error diagnostic.
+ */
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Clapperboard } from "@/components/notfound/Clapperboard";
 
 const NotFound = () => {
   const location = useLocation();
@@ -12,13 +17,13 @@ const NotFound = () => {
   return (
     <div className="flex min-h-[70vh] items-center justify-center bg-hero-gradient">
       <div className="text-center px-6">
-        <p className="font-serif-display text-7xl text-primary mb-4">404</p>
-        <h1 className="font-serif-display text-2xl mb-3">This page hasn't been created yet.</h1>
-        <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
-          The page you're looking for doesn't exist. Let's get you back to where the work is.
-        </p>
-        <Button asChild className="rounded-full px-8">
-          <Link to="/">Return Home</Link>
+        <Clapperboard />
+        <p className="font-serif-display text-7xl text-primary mb-4 mt-8">404</p>
+        <h1 className="font-serif-display text-2xl mb-3">
+          Cut! This page isn't in the film.
+        </h1>
+        <Button asChild className="rounded-full px-8 mt-4">
+          <Link to="/">Back to the start</Link>
         </Button>
       </div>
     </div>

@@ -1,56 +1,57 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Dancing+Script:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ============================================================
-   O STUDIO INNOVATIONS — BRAND THEME (white / gray / black + gold accent)
-   1. Signature Milk White  #FDFFF9  hsl(80 100% 98.8%)   main background
-   2. Light Gray            #F5F4F4  hsl(30 4% 96%)       soft sections / cards
-   3. Gray Border           #E4E3E2  hsl(30 4% 89%)       borders / inputs
-   4. Muted Gray            #737170  hsl(30 3% 45%)       secondary text
-   5. Soft Charcoal         #252321  hsl(30 5.7% 13.7%)   headings / body
-   6. Rich Black            #11100E  hsl(40 9.7% 6.1%)    buttons / footer / dark
-   7. Pure White            #FFFFFF  hsl(0 0% 100%)       cards / nav surfaces
-   8. Signature Gold        #D99A00  hsl(42.6 100% 42.5%) ACCENT ONLY —
-      Antique Gold          #B8860B  hsl(42.7 88.7% 38.2%) highlighted words,
-      footer headings/icons, focus ring, divider. Rare = catchy.
+   O STUDIO INNOVATIONS — CINEMATIC BRAND THEME (dark gray / white)
+   1. Near-Black        hsl(0 0% 7%)     main background
+   2. Dark Gray         hsl(0 0% 10%)    cards / popovers
+   3. Layered Gray      hsl(0 0% 14%)    secondary surfaces — white
+      layered over near-black (4-8%), never flat pure black blocks
+   4. Pure White        hsl(0 0% 100%)   text / primary buttons
+   5. White 62%         hsl(0 0% 62%)    secondary text
+   6. Borders           white at 10% (inputs at 14%)
+   7. Signature Gold    hsl(42.6 100% 42.5%)  ICONS + ONE HAIRLINE
+      ONLY — no gold text, no gold buttons.
+   Font: Inter only (300-700). Headings: weight 600, tracking -0.02em.
    ============================================================ */
 
 @layer base {
   :root {
-    --background: 80 100% 98.8%;
-    --foreground: 30 5.7% 13.7%;
+    --background: 0 0% 7%;
+    --foreground: 0 0% 100%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 30 5.7% 13.7%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 30 5.7% 13.7%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 100%;
 
-    /* Primary = Rich Black → buttons look like the sample (black, white text) */
-    --primary: 40 9.7% 6.1%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary = White → primary buttons are white fill with dark text */
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 7%;
 
-    --secondary: 30 4% 96%;
-    --secondary-foreground: 30 5.7% 13.7%;
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 30 4% 96%;
-    --muted-foreground: 30 3% 45%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 62%;
 
-    --accent: 30 4% 96%;
-    --accent-foreground: 30 5.7% 13.7%;
+    --accent: 0 0% 14%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 6 70% 52%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 30 4% 89%;
-    --input: 30 4% 89%;
-    --ring: 42.7 88.7% 38.2%;
+    --border: 0 0% 100% / 0.1;
+    --input: 0 0% 100% / 0.14;
+    --ring: 0 0% 100%;
 
     --radius: 0.5rem;
 
-    --gradient-hero: linear-gradient(160deg, hsl(80 100% 98.8%) 0%, hsl(30 4% 96%) 55%, hsl(30 4% 92%) 100%);
+    /* Hero wash — white at 7%→0% layered over the near-black page */
+    --gradient-hero: linear-gradient(160deg, hsl(0 0% 100% / 0.07) 0%, hsl(0 0% 100% / 0.03) 55%, hsl(0 0% 100% / 0) 100%);
     --gradient-gold: linear-gradient(120deg, hsl(42.7 88.7% 38.2%) 0%, hsl(42.6 100% 42.5%) 50%, hsl(42.7 88.7% 38.2%) 100%);
     --shadow-soft: 0 4px 32px -6px hsl(30 5.7% 13.7% / 0.10);
     --shadow-card: 0 1px 16px -4px hsl(30 5.7% 13.7% / 0.07);
@@ -66,28 +67,28 @@
     --sidebar-ring: 42.7 88.7% 38.2%;
   }
 
-  /* O Studio is a single light theme by design — .dark mirrors :root
-     so the app looks correct regardless of a consumer's system preference. */
+  /* Single dark theme — .dark mirrors :root so the app looks correct
+     regardless of a consumer's system preference. */
   .dark {
-    --background: 80 100% 98.8%;
-    --foreground: 30 5.7% 13.7%;
-    --card: 0 0% 100%;
-    --card-foreground: 30 5.7% 13.7%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 30 5.7% 13.7%;
-    --primary: 40 9.7% 6.1%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 30 4% 96%;
-    --secondary-foreground: 30 5.7% 13.7%;
-    --muted: 30 4% 96%;
-    --muted-foreground: 30 3% 45%;
-    --accent: 30 4% 96%;
-    --accent-foreground: 30 5.7% 13.7%;
+    --background: 0 0% 7%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 7%;
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 62%;
+    --accent: 0 0% 14%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 6 70% 52%;
     --destructive-foreground: 0 0% 100%;
-    --border: 30 4% 89%;
-    --input: 30 4% 89%;
-    --ring: 42.7 88.7% 38.2%;
+    --border: 0 0% 100% / 0.1;
+    --input: 0 0% 100% / 0.14;
+    --ring: 0 0% 100%;
   }
 }
 
@@ -103,23 +104,23 @@
     font-family: 'Inter', system-ui, sans-serif;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
   }
 }
 
 @layer utilities {
+  /* Class names kept so existing pages don't break — both now resolve to Inter */
   .font-script {
-    font-family: 'Dancing Script', cursive;
+    font-family: 'Inter', system-ui, sans-serif;
   }
   .font-serif-display {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Inter', system-ui, sans-serif;
   }
-  /* Gold accent — reserved for highlighted words in display headings */
+  /* Was gold display text — now plain white (no gold text in the new brand) */
   .text-gold-gradient {
-    background: var(--gradient-gold);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: hsl(0 0% 100%);
   }
   .bg-hero-gradient {
     background: var(--gradient-hero);
@@ -127,10 +128,26 @@
   .shadow-gold-glow {
     box-shadow: var(--shadow-gold-glow);
   }
-  /* Gold hairline divider — the small catchy touch on dark surfaces */
+  /* Gold hairline divider — the one thin gold thread the brand allows */
   .divider-line {
     height: 1px;
     background: linear-gradient(90deg, transparent, hsl(42.7 88.7% 38.2% / 0.7), transparent);
+  }
+  /* Alias for the same gold hairline */
+  .hairline-gold {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(42.7 88.7% 38.2% / 0.7), transparent);
+  }
+  /* Gold icon tint — icons only, never text or buttons */
+  .icon-gold {
+    @apply text-brand-gold;
+  }
+  /* Translucent panel — white at 5% over the near-black page */
+  .glass {
+    background: hsl(0 0% 100% / 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsl(0 0% 100% / 0.1);
   }
   .tracking-widest-plus {
     letter-spacing: 0.25em;

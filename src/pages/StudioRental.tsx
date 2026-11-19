@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowRight, Check, Clock, DoorOpen, PartyPopper, Users, Video } from "lucide-react";
+import { ArrowRight, Check, Clock, DoorOpen, Users, Video } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getServiceBySlug } from "@/data/services";
+import { contactWhatsAppUrl } from "@/data/contact";
 import { submitStudioBooking } from "@/lib/bookings";
+import { RoomHero } from "@/components/studio-rental/RoomHero";
+import { RoomPicker } from "@/components/studio-rental/RoomPicker";
+import { SuccessScene } from "@/components/start-project/SuccessScene";
 
 // ============================================================
 // STUDIO RENTAL — booking request
@@ -62,8 +66,6 @@ const TECHNICIAN_OPTIONS = [
   "No — we're self-sufficient",
   "Not sure — tell me more",
 ] as const;
-
-const WHATSAPP = "https://wa.me/2347042251787";
 
 const formSchema = z
   .object({
@@ -259,42 +261,32 @@ const StudioRental = () => {
   // --- Confirmation -------------------------------------------
   if (submitted) {
     return (
-      <div className="container py-28 max-w-xl text-center">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/15">
-          <PartyPopper className="text-primary" size={28} />
-        </div>
-        <h1 className="font-serif-display text-3xl sm:text-4xl mb-4">Your booking request is in.</h1>
-        <p className="text-muted-foreground leading-relaxed mb-8">
-          Thanks{guestName ? `, ${guestName.split(" ")[0]}` : ""}. O Studio has your request and will
-          reply with availability and a quote for your slot — usually within the same working day.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Button asChild variant="outline" className="rounded-full px-8">
-            <Link to="/services/studio-rental">Back to Studio Rental</Link>
-          </Button>
-          <Button asChild className="rounded-full px-8">
-            <Link to="/">Return Home</Link>
-          </Button>
-        </div>
-      </div>
+      <SuccessScene
+        message={
+          <>
+            Thanks{guestName ? `, ${guestName.split(" ")[0]}` : ""}. O Studio has your request and
+            will reply with availability and a quote for your slot — usually within the same working
+            day.
+          </>
+        }
+        actions={
+          <>
+            <Button asChild variant="outline" className="rounded-full px-8">
+              <Link to="/services/studio-rental">Back to Studio Rental</Link>
+            </Button>
+            <Button asChild className="rounded-full px-8">
+              <Link to="/">Return Home</Link>
+            </Button>
+          </>
+        }
+      />
     );
   }
 
   return (
     <div>
       {/* HERO */}
-      <section className="bg-hero-gradient py-24">
-        <div className="container text-center max-w-3xl mx-auto">
-          <p className="text-xs tracking-widest-plus uppercase text-primary mb-6">Studio Rental</p>
-          <h1 className="font-serif-display text-4xl sm:text-6xl leading-tight">
-            Book a studio session
-          </h1>
-          <p className="mt-6 text-muted-foreground leading-relaxed">
-            Studio Rental is the space. A booking is your request to hold a slot. Tell us the space,
-            the date, and how you'll use it — we reply with availability and a quote.
-          </p>
-        </div>
-      </section>
+      <RoomHero />
 
       {/* RENTAL vs BOOKING */}
       <section className="py-16 border-b border-border">
@@ -342,7 +334,7 @@ const StudioRental = () => {
               </li>
             </ol>
             <a
-              href={WHATSAPP}
+              href={contactWhatsAppUrl}
               target="_blank"
               rel="noreferrer"
               className="mt-5 inline-block text-sm text-primary hover:underline"
@@ -434,27 +426,12 @@ const StudioRental = () => {
               {/* SLOT */}
               <div className="space-y-3">
                 <p className={fieldLabel}>Your slot</p>
-                <div className="space-y-2">
-                  <Label htmlFor="studio">Which space do you need?</Label>
-                  <Select
-                    value={selectedStudio}
-                    onValueChange={(next) => setValue("studio", next, { shouldValidate: true })}
-                  >
-                    <SelectTrigger id="studio" className="w-full" aria-label="Which space do you need?">
-                      <SelectValue placeholder="Select a studio space" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {studioOptions.map((option) => (
-                        <SelectItem key={option} value={option}>
-                          {option}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.studio && (
-                    <p className="text-xs text-destructive">{errors.studio.message}</p>
-                  )}
-                </div>
+                <RoomPicker
+                  options={studioOptions}
+                  value={selectedStudio}
+                  onChange={(next) => setValue("studio", next, { shouldValidate: true })}
+                  error={errors.studio?.message}
+                />
 
                 <div className="grid gap-4 sm:grid-cols-3">
                   <div className="space-y-2">

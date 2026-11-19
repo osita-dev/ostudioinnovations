@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Check, ArrowRight, ArrowLeft, PartyPopper } from "lucide-react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,10 +16,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { serviceCategories } from "@/data/services";
+import { getProjectBySlug } from "@/data/portfolio";
 import { getIcon } from "@/lib/icons";
 import { submitProjectInquiry } from "@/lib/inquiries";
 import type { CategorySlug } from "@/types";
 import { cn } from "@/lib/utils";
+import { FormFrame } from "@/components/start-project/FormFrame";
+import { StepProgress } from "@/components/start-project/StepProgress";
+import { StepTransition } from "@/components/start-project/StepTransition";
+import { SuccessScene } from "@/components/start-project/SuccessScene";
 
 // Services where date/location/guest-count questions are relevant
 const EVENT_LIKE: CategorySlug[] = ["media-events", "content-entertainment"];
@@ -56,7 +61,10 @@ const steps = ["Service", "Project Details", "Contact", "Review"] as const;
 const StartProject = () => {
   const [searchParams] = useSearchParams();
   const preselected = searchParams.get("service") ?? "";
+  const projectParam = searchParams.get("project");
   const [step, setStep] = useState(0);
+  // Slide direction for the step transition: 1 forward, -1 back.
+  const [direction, setDirection] = useState<1 | -1>(1);
   const [submitted, setSubmitted] = useState(false);
   // Supabase delivery states — confirmation only after the row exists.
   const [sending, setSending] = useState(false);
@@ -97,9 +105,15 @@ const StartProject = () => {
 
   const goNext = async () => {
     const valid = await trigger(stepFields[step]);
-    if (valid) setStep((s) => Math.min(s + 1, steps.length - 1));
+    if (valid) {
+      setDirection(1);
+      setStep((s) => Math.min(s + 1, steps.length - 1));
+    }
   };
-  const goBack = () => setStep((s) => Math.max(s - 1, 0));
+  const goBack = () => {
+    setDirection(-1);
+    setStep((s) => Math.max(s - 1, 0));
+  };
   const onSubmit = async (values: FormValues) => {
     // Supabase is the ONLY submission path (stage 09 / Phase C): the brief
     // must land in `project_inquiries` — the single view in the O Studio
@@ -136,30 +150,31 @@ const StartProject = () => {
 
   const values = watch();
   const selectedServiceData = serviceCategories.find((s) => s.slug === selectedService);
+  // ?project= (from EndCredits) picks the frame's poster and "like" line.
+  const projectData = projectParam ? getProjectBySlug(projectParam) : undefined;
 
   if (submitted) {
     return (
-      <div className="container py-28 max-w-xl text-center">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/15">
-          <PartyPopper className="text-primary" size={28} />
-        </div>
-        <h1 className="font-serif-display text-3xl sm:text-4xl mb-4">Your project request is in.</h1>
-        <p className="text-muted-foreground leading-relaxed mb-8">
-          Thanks, {values.name.split(" ")[0]}. O Studio has received your structured project request and
-          will follow up at {values.email} or {values.phone} shortly to discuss next steps.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+      <SuccessScene
+        message={
+          <>
+            Thanks, {values.name.split(" ")[0]}. O Studio has received your structured project
+            request and will follow up at {values.email} or {values.phone} shortly to discuss next
+            steps.
+          </>
+        }
+        actions={
           <Button asChild className="rounded-full px-8">
             <a href="/">Return Home</a>
           </Button>
-        </div>
-      </div>
+        }
+      />
     );
   }
 
   return (
     <div className="py-20">
-      <div className="container max-w-2xl">
+      <FormFrame service={selectedServiceData} project={projectData}>
         <div className="text-center mb-12">
           <p className="text-xs tracking-widest-plus uppercase text-primary mb-4">Start a Project</p>
           <h1 className="font-serif-display text-3xl sm:text-4xl">Tell us about your project.</h1>
@@ -168,202 +183,181 @@ const StartProject = () => {
           </p>
         </div>
 
-        {/* Stepper */}
-        <div className="flex items-center justify-between mb-12">
-          {steps.map((label, i) => (
-            <div key={label} className="flex-1 flex items-center">
-              <div className="flex flex-col items-center flex-1">
-                <div
-                  className={cn(
-                    "h-8 w-8 rounded-full flex items-center justify-center text-xs font-semibold border",
-                    i < step
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : i === step
-                        ? "border-primary text-primary"
-                        : "border-border text-muted-foreground"
-                  )}
-                >
-                  {i < step ? <Check size={14} /> : i + 1}
-                </div>
-                <span className="text-[11px] mt-2 text-muted-foreground hidden sm:block">{label}</span>
-              </div>
-              {i < steps.length - 1 && (
-                <div className={cn("h-px flex-1 -mt-5", i < step ? "bg-primary" : "bg-border")} />
-              )}
-            </div>
-          ))}
-        </div>
+        {/* Step progress — one filling bar over the existing step labels */}
+        <StepProgress step={step} labels={steps} />
 
         <form onSubmit={handleSubmit(onSubmit)} className="bg-card border border-border rounded-2xl p-8 sm:p-10 shadow-card">
-          {/* STEP 0 — SERVICE */}
-          {step === 0 && (
-            <div className="space-y-6">
-              <h2 className="font-serif-display text-xl">Which service is this for?</h2>
-              <div className="grid sm:grid-cols-2 gap-3">
-                {serviceCategories.map((s) => {
-                  const Icon = getIcon(s.icon);
-                  const active = selectedService === s.slug;
-                  return (
-                    <button
-                      type="button"
-                      key={s.slug}
-                      onClick={() => setValue("service", s.slug, { shouldValidate: true })}
-                      className={cn(
-                        "text-left rounded-xl border p-4 transition-colors",
-                        active ? "border-primary bg-primary/10" : "border-border hover:border-primary/40"
-                      )}
-                    >
-                      <Icon className="text-primary mb-2" size={20} strokeWidth={1.5} />
-                      <p className="text-sm font-medium">{s.shortName}</p>
-                    </button>
-                  );
-                })}
-              </div>
-              {formState.errors.service && (
-                <p className="text-xs text-destructive">{formState.errors.service.message}</p>
-              )}
-            </div>
-          )}
-
-          {/* STEP 1 — PROJECT DETAILS (adaptive) */}
-          {step === 1 && (
-            <div className="space-y-6">
-              <h2 className="font-serif-display text-xl">
-                Tell us more about your {selectedServiceData?.shortName.toLowerCase() ?? "project"}.
-              </h2>
-
-              <div className="space-y-2">
-                <Label htmlFor="projectType">
-                  {isTechLike ? "What are you looking to build?" : "Project type"}
-                </Label>
-                <Input
-                  id="projectType"
-                  placeholder={isTechLike ? "e.g. Business website, AI chatbot, internal tool" : "e.g. Wedding, documentary, brand identity"}
-                  {...register("projectType")}
-                />
-                {formState.errors.projectType && (
-                  <p className="text-xs text-destructive">{formState.errors.projectType.message}</p>
+          <StepTransition step={step} direction={direction}>
+            {/* STEP 0 — SERVICE */}
+            {step === 0 && (
+              <div className="space-y-6">
+                <h2 className="font-serif-display text-xl">Which service is this for?</h2>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {serviceCategories.map((s) => {
+                    const Icon = getIcon(s.icon);
+                    const active = selectedService === s.slug;
+                    return (
+                      <button
+                        type="button"
+                        key={s.slug}
+                        onClick={() => setValue("service", s.slug, { shouldValidate: true })}
+                        className={cn(
+                          "text-left rounded-xl border p-4 transition-colors",
+                          active ? "border-primary bg-primary/10" : "border-border hover:border-primary/40"
+                        )}
+                      >
+                        <Icon className="text-primary mb-2" size={20} strokeWidth={1.5} />
+                        <p className="text-sm font-medium">{s.shortName}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+                {formState.errors.service && (
+                  <p className="text-xs text-destructive">{formState.errors.service.message}</p>
                 )}
               </div>
+            )}
 
-              {isEventLike && (
+            {/* STEP 1 — PROJECT DETAILS (adaptive) */}
+            {step === 1 && (
+              <div className="space-y-6">
+                <h2 className="font-serif-display text-xl">
+                  Tell us more about your {selectedServiceData?.shortName.toLowerCase() ?? "project"}.
+                </h2>
+
+                <div className="space-y-2">
+                  <Label htmlFor="projectType">
+                    {isTechLike ? "What are you looking to build?" : "Project type"}
+                  </Label>
+                  <Input
+                    id="projectType"
+                    placeholder={isTechLike ? "e.g. Business website, AI chatbot, internal tool" : "e.g. Wedding, documentary, brand identity"}
+                    {...register("projectType")}
+                  />
+                  {formState.errors.projectType && (
+                    <p className="text-xs text-destructive">{formState.errors.projectType.message}</p>
+                  )}
+                </div>
+
+                {isEventLike && (
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="date">Event / project date</Label>
+                      <Input id="date" type="date" {...register("date")} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="expectedGuests">Expected audience / guests</Label>
+                      <Input id="expectedGuests" placeholder="e.g. 150 guests" {...register("expectedGuests")} />
+                    </div>
+                    <div className="space-y-2 sm:col-span-2">
+                      <Label htmlFor="location">Location</Label>
+                      <Input id="location" placeholder="Venue / city" {...register("location")} />
+                    </div>
+                  </div>
+                )}
+
+                {!isEventLike && !isTechLike && (
+                  <div className="space-y-2">
+                    <Label htmlFor="location">Location (if relevant)</Label>
+                    <Input id="location" placeholder="City / region" {...register("location")} />
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <Label>Budget range</Label>
+                  <Select value={values.budgetRange} onValueChange={(v) => setValue("budgetRange", v, { shouldValidate: true })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select an estimated budget range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {budgetRanges.map((b) => (
+                        <SelectItem key={b} value={b}>{b}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {formState.errors.budgetRange && (
+                    <p className="text-xs text-destructive">{formState.errors.budgetRange.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="description">Describe your project</Label>
+                  <Textarea
+                    id="description"
+                    rows={4}
+                    placeholder="What are you trying to achieve? Any context helps us prepare a relevant response."
+                    {...register("description")}
+                  />
+                  {formState.errors.description && (
+                    <p className="text-xs text-destructive">{formState.errors.description.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="additionalRequirements">Additional requirements (optional)</Label>
+                  <Textarea
+                    id="additionalRequirements"
+                    rows={3}
+                    placeholder="Anything else O Studio should know?"
+                    {...register("additionalRequirements")}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* STEP 2 — CONTACT */}
+            {step === 2 && (
+              <div className="space-y-6">
+                <h2 className="font-serif-display text-xl">How can we reach you?</h2>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full name</Label>
+                  <Input id="name" placeholder="Your name" {...register("name")} />
+                  {formState.errors.name && <p className="text-xs text-destructive">{formState.errors.name.message}</p>}
+                </div>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="date">Event / project date</Label>
-                    <Input id="date" type="date" {...register("date")} />
+                    <Label htmlFor="phone">Phone / WhatsApp</Label>
+                    <Input id="phone" placeholder="+234..." {...register("phone")} />
+                    {formState.errors.phone && <p className="text-xs text-destructive">{formState.errors.phone.message}</p>}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="expectedGuests">Expected audience / guests</Label>
-                    <Input id="expectedGuests" placeholder="e.g. 150 guests" {...register("expectedGuests")} />
-                  </div>
-                  <div className="space-y-2 sm:col-span-2">
-                    <Label htmlFor="location">Location</Label>
-                    <Input id="location" placeholder="Venue / city" {...register("location")} />
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" placeholder="you@example.com" {...register("email")} />
+                    {formState.errors.email && <p className="text-xs text-destructive">{formState.errors.email.message}</p>}
                   </div>
                 </div>
-              )}
+              </div>
+            )}
 
-              {!isEventLike && !isTechLike && (
-                <div className="space-y-2">
-                  <Label htmlFor="location">Location (if relevant)</Label>
-                  <Input id="location" placeholder="City / region" {...register("location")} />
-                </div>
-              )}
-
-              <div className="space-y-2">
-                <Label>Budget range</Label>
-                <Select value={values.budgetRange} onValueChange={(v) => setValue("budgetRange", v, { shouldValidate: true })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select an estimated budget range" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {budgetRanges.map((b) => (
-                      <SelectItem key={b} value={b}>{b}</SelectItem>
+            {/* STEP 3 — REVIEW */}
+            {step === 3 && (
+              <div className="space-y-6">
+                <h2 className="font-serif-display text-xl">Review your request</h2>
+                <dl className="divide-y divide-border rounded-xl border border-border overflow-hidden">
+                  {[
+                    ["Service", selectedServiceData?.name],
+                    ["Project type", values.projectType],
+                    values.date ? ["Date", values.date] : null,
+                    values.location ? ["Location", values.location] : null,
+                    values.expectedGuests ? ["Expected guests", values.expectedGuests] : null,
+                    ["Budget range", values.budgetRange],
+                    ["Description", values.description],
+                    values.additionalRequirements ? ["Additional requirements", values.additionalRequirements] : null,
+                    ["Name", values.name],
+                    ["Phone / WhatsApp", values.phone],
+                    ["Email", values.email],
+                  ]
+                    .filter((row): row is [string, string] => Boolean(row))
+                    .map(([label, val]) => (
+                      <div key={label} className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4 p-4 text-sm">
+                        <dt className="sm:w-40 shrink-0 text-muted-foreground">{label}</dt>
+                        <dd className="text-foreground">{val}</dd>
+                      </div>
                     ))}
-                  </SelectContent>
-                </Select>
-                {formState.errors.budgetRange && (
-                  <p className="text-xs text-destructive">{formState.errors.budgetRange.message}</p>
-                )}
+                </dl>
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description">Describe your project</Label>
-                <Textarea
-                  id="description"
-                  rows={4}
-                  placeholder="What are you trying to achieve? Any context helps us prepare a relevant response."
-                  {...register("description")}
-                />
-                {formState.errors.description && (
-                  <p className="text-xs text-destructive">{formState.errors.description.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="additionalRequirements">Additional requirements (optional)</Label>
-                <Textarea
-                  id="additionalRequirements"
-                  rows={3}
-                  placeholder="Anything else O Studio should know?"
-                  {...register("additionalRequirements")}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* STEP 2 — CONTACT */}
-          {step === 2 && (
-            <div className="space-y-6">
-              <h2 className="font-serif-display text-xl">How can we reach you?</h2>
-              <div className="space-y-2">
-                <Label htmlFor="name">Full name</Label>
-                <Input id="name" placeholder="Your name" {...register("name")} />
-                {formState.errors.name && <p className="text-xs text-destructive">{formState.errors.name.message}</p>}
-              </div>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone / WhatsApp</Label>
-                  <Input id="phone" placeholder="+234..." {...register("phone")} />
-                  {formState.errors.phone && <p className="text-xs text-destructive">{formState.errors.phone.message}</p>}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="you@example.com" {...register("email")} />
-                  {formState.errors.email && <p className="text-xs text-destructive">{formState.errors.email.message}</p>}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 3 — REVIEW */}
-          {step === 3 && (
-            <div className="space-y-6">
-              <h2 className="font-serif-display text-xl">Review your request</h2>
-              <dl className="divide-y divide-border rounded-xl border border-border overflow-hidden">
-                {[
-                  ["Service", selectedServiceData?.name],
-                  ["Project type", values.projectType],
-                  values.date ? ["Date", values.date] : null,
-                  values.location ? ["Location", values.location] : null,
-                  values.expectedGuests ? ["Expected guests", values.expectedGuests] : null,
-                  ["Budget range", values.budgetRange],
-                  ["Description", values.description],
-                  values.additionalRequirements ? ["Additional requirements", values.additionalRequirements] : null,
-                  ["Name", values.name],
-                  ["Phone / WhatsApp", values.phone],
-                  ["Email", values.email],
-                ]
-                  .filter((row): row is [string, string] => Boolean(row))
-                  .map(([label, val]) => (
-                    <div key={label} className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4 p-4 text-sm">
-                      <dt className="sm:w-40 shrink-0 text-muted-foreground">{label}</dt>
-                      <dd className="text-foreground">{val}</dd>
-                    </div>
-                  ))}
-              </dl>
-            </div>
-          )}
+            )}
+          </StepTransition>
 
           {/* SEND ERROR — answers are kept so the visitor can retry */}
           {sendError && (
@@ -394,7 +388,7 @@ const StartProject = () => {
             )}
           </div>
         </form>
-      </div>
+      </FormFrame>
     </div>
   );
 };
